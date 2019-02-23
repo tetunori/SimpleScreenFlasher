@@ -1,0 +1,206 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Simple Screen Flasher</title>
+
+        <!-- webapp settings -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="red">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <!-- favion -->
+        <link rel="icon" href="./images/favicon.ico">
+
+        <style>
+            @import url(http://fonts.googleapis.com/earlyaccess/notosansjp.css);
+            body {
+                overflow: hidden;
+                height:100%;
+                width:100%;
+                margin:0;
+                padding:0;
+                -webkit-background-size: 100%;
+                background-color:whitesmoke;
+                font-family: 'Noto Sans JP', sans-serif;
+            }
+
+            canvas{
+                position:absolute;
+            }
+
+            div.operationText {
+                position:absolute;
+                right: 10px;
+                bottom:10px;
+                font-size: 15px;
+                font-weight: 700;
+                color: rgba( 255, 255, 255, 0.6 );
+            }
+            div.titleTextWrapper {
+                position:absolute;
+                left:30px;
+                top:15px;
+            }
+            div.titleText {
+                position: relative;;
+                font-size: 40px;
+                font-weight: 700;
+                color: rgba( 0, 0, 0, 1 );
+            }
+            div.descriptionText {
+                position: relative;;
+                font-size: 16px;
+                font-weight: 500;
+                color: rgba( 0, 0, 0, 1 );
+            }
+            div.copyWriteText {
+                position:absolute;
+                left: 10px;
+                bottom:10px;
+                font-size: 12px;
+                font-weight: 500;
+                color: black;
+            }
+            #copyWriteText a { color:black } 
+        </style>
+    </head>
+    <body>
+        
+        <canvas id="flashCanvas" width="1920" height="1080"></canvas>
+        <div id="operationText" class="operationText"> 
+            "S" : Start/Stop, "←" : Color A, "→" : Color B, "X" : Exit 
+        </div>
+        <div id="titleTextWrapper" class="titleTextWrapper">
+            <div id="titleText" class="titleText"> 
+                Simple Screen Flasher 
+            </div>
+            <br>
+            <div id="descriptionText" class="descriptionText"> 
+                <p>補色の関係にある２色で、画面全体を点滅させることのできる、シンプルなツールです。
+                    <br><b>注意</b> : 画面を長時間直視し続けないでください。また、キー操作で高速に点滅させる動作はお控えください。</p>
+                <p>A simple tool that allows you to flash the entire screen with two complementary colors.
+                    <br><b>WARNING</b> : Do NOT keep on looking at the screen for a long time. Please refrain from flashing at high speed by key operation.</p>
+            </div>
+        </div>
+        <div id="copyWriteText" class="copyWriteText"> 
+            <a href="https://github.com/tetunori/SimpleScreenFlasher">Hosted on GitHub</a>. Copyright (c) 2019 Tetsunori NAKAYAMA. MIT License.
+        </div>
+
+        <script>
+            const RED_COLOR   = 'rgb( 255,   0,   0)'; // #ff0000
+            const GREEN_COLOR = 'rgb(   0, 169,  51)'; // #00a933
+            const FLASH_CYCLE_TIME_MSEC = 1100;
+            const KEYCODE_ESC   = 27;
+            const KEYCODE_X     = 88;
+            const KEYCODE_S     = 83;
+            const KEYCODE_LEFT  = 37;
+            const KEYCODE_RIGHT = 39;
+
+            window.addEventListener('keydown', (event) => {
+                if ( ( event.keyCode === KEYCODE_X ) || ( event.keyCode === KEYCODE_ESC ) ) {
+                    stopFlashIntervalTimer();
+                    clearFlashCanvas();
+                    exitFullScreen();
+                }else if ( event.keyCode === KEYCODE_S ) {
+                    if( flashIntervalTimer === null ){
+                        startFlashIntervalTimer();
+                        requestFullScreen();
+                    }else{
+                        stopFlashIntervalTimer();
+                    }
+                }else if ( event.keyCode === KEYCODE_LEFT ) {
+                    stopFlashIntervalTimer();
+                    changeFlashColor( flashColor[0] );
+                    currentColorIndex = 0;
+                }else if ( event.keyCode === KEYCODE_RIGHT ) {
+                    stopFlashIntervalTimer();
+                    changeFlashColor( flashColor[1] );
+                    currentColorIndex = 1;
+                }
+            });
+
+            let flashColor = ['', ''];
+            flashColor[0] = RED_COLOR;
+            flashColor[1] = GREEN_COLOR;
+            let currentColorIndex = 0; 
+            // changeFlashColor( flashColor[currentColorIndex] );
+
+            let flashIntervalTimer = null;
+            function startFlashIntervalTimer(){
+                if( flashIntervalTimer === null ){
+                    flashIntervalTimer = setInterval( () => {
+                        // console.log( 'currentColorIndex : ' + currentColorIndex )
+                        if( currentColorIndex === 0 ){
+                            changeFlashColor( flashColor[1] );
+                            currentColorIndex = 1;
+                        }else{
+                            changeFlashColor( flashColor[0] );
+                            currentColorIndex = 0;
+                        }
+                    }, FLASH_CYCLE_TIME_MSEC );
+                }
+            }
+            function stopFlashIntervalTimer(){
+                if( flashIntervalTimer !== null ){
+                    clearInterval( flashIntervalTimer );
+                    flashIntervalTimer = null;
+                }
+            }
+            
+            function changeFlashColor( color ){
+                var canvas = document.getElementById('flashCanvas');
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function clearFlashCanvas(){
+                var canvas = document.getElementById('flashCanvas');
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Reference : https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
+            function requestFullScreen(){
+                var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+                    (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+                    (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+                    (document.msFullscreenElement && document.msFullscreenElement !== null);
+
+                var docElm = document.documentElement;
+                if (!isInFullScreen) {
+                    if (docElm.requestFullscreen) {
+                        docElm.requestFullscreen();
+                    } else if (docElm.mozRequestFullScreen) {
+                        docElm.mozRequestFullScreen();
+                    } else if (docElm.webkitRequestFullScreen) {
+                        docElm.webkitRequestFullScreen();
+                    } else if (docElm.msRequestFullscreen) {
+                        docElm.msRequestFullscreen();
+                    }
+                }
+            }
+
+            function exitFullScreen(){
+                var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+                    (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+                    (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+                    (document.msFullscreenElement && document.msFullscreenElement !== null);
+
+                var docElm = document.documentElement;
+                if (isInFullScreen) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            }
+            
+        </script>
+    </body>
+</html>
