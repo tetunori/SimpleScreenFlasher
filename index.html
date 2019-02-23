@@ -241,6 +241,13 @@
                 }
             }
 
+            startButtonCanvas = document.getElementById('startButtonCanvas');
+            startButtonCanvas.addEventListener('click', () =>{
+                // console.log( 'startButtonCanvas.onClick' );
+                changeFlashColor();
+                startFlashIntervalTimer();
+                requestFullScreen();
+            }, false);
             drawStartButton();
             
         </script>
