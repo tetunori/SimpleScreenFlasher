@@ -35,8 +35,16 @@
                 font-size: 15px;
                 font-weight: 700;
                 color: rgba( 255, 255, 255, 0.6 );
+                display:none;
             }
-            div.titleTextWrapper {
+            div.exitButtonDiv {
+                position:absolute;
+                left: 10px;
+                top:10px;
+                display:none;
+            }
+
+            div.titleScreenWrapper {
                 position:absolute;
                 left:30px;
                 top:15px;
@@ -66,14 +74,17 @@
     </head>
     <body>
         <canvas id="flashCanvas" width="1920" height="1080"></canvas>
+        <div id="exitButtonDiv" class="exitButtonDiv">
+            <canvas id="exitButtonCanvas" width="120" height="120"></canvas>
+        </div> 
         <div id="operationText" class="operationText"> 
             "S" : Start/Stop, "←" : Color A, "→" : Color B, "X" : Exit 
         </div>
-        <div id="titleTextWrapper" class="titleTextWrapper">
+        <div id="titleScreenWrapper" class="titleScreenWrapper">
             <div id="titleText" class="titleText"> 
                 Simple Screen Flasher 
             </div>
-            <br>
+
             <div id="descriptionText" class="descriptionText"> 
                 <p>補色の関係にある２色で、画面全体を点滅させることのできる、シンプルなツールです。
                     <br><b>注意</b> : 画面を長時間直視し続けないでください。また、キー操作で高速に点滅させる動作はお控えください。</p>
@@ -101,11 +112,13 @@
                 if ( ( event.keyCode === KEYCODE_X ) || ( event.keyCode === KEYCODE_ESC ) ) {
                     stopFlashIntervalTimer();
                     clearFlashCanvas();
+                    transitToTitle();
                     exitFullScreen();
                 }else if ( event.keyCode === KEYCODE_S ) {
                     if( flashIntervalTimer === null ){
                         changeFlashColor();
                         startFlashIntervalTimer();
+                        transitToFlash();
                         requestFullScreen();
                     }else{
                         stopFlashIntervalTimer();
@@ -199,6 +212,47 @@
                 
             }
 
+            function drawExitButton(){
+                var canvas = document.getElementById('exitButtonCanvas');
+                var ctx = canvas.getContext('2d');
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Round Triangle
+                ctx.beginPath();
+                let unitLength = 28;
+                ctx.moveTo( canvas.width / 2 + unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 - unitLength, canvas.height / 2 );
+                ctx.lineTo( canvas.width / 2 + unitLength/2, canvas.height / 2 + unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 + unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 - unitLength, canvas.height / 2 );
+                ctx.strokeStyle = 'rgba(245, 245, 245, 0.4)';
+                ctx.lineWidth = 10;
+                ctx.lineJoin = "round";
+                ctx.stroke();                
+            }
+
+            function drawHilightedExitButton(){
+                var canvas = document.getElementById('exitButtonCanvas');
+                var ctx = canvas.getContext('2d');
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Round Triangle
+                ctx.beginPath();
+                let unitLength = 28;
+                ctx.moveTo( canvas.width / 2 + unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 - unitLength, canvas.height / 2 );
+                ctx.lineTo( canvas.width / 2 + unitLength/2, canvas.height / 2 + unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 + unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
+                ctx.lineTo( canvas.width / 2 - unitLength, canvas.height / 2 );
+                ctx.strokeStyle = 'rgb(245, 245, 245)';
+                ctx.lineWidth = 10;
+                ctx.lineJoin = "round";
+                ctx.stroke();
+                // ctx.fillStyle = 'rgb(245, 245, 245)' ;
+                // ctx.fill();             
+            }
 
             // Reference : https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
             function requestFullScreen(){
@@ -241,14 +295,44 @@
                 }
             }
 
-            startButtonCanvas = document.getElementById('startButtonCanvas');
+            let startButtonCanvas = document.getElementById('startButtonCanvas');
             startButtonCanvas.addEventListener('click', () =>{
                 // console.log( 'startButtonCanvas.onClick' );
                 changeFlashColor();
                 startFlashIntervalTimer();
+                transitToFlash();
                 requestFullScreen();
             }, false);
             drawStartButton();
+
+            let exitButtonCanvas = document.getElementById('exitButtonCanvas');
+            exitButtonCanvas.addEventListener('click', () =>{
+                stopFlashIntervalTimer();
+                clearFlashCanvas();
+                transitToTitle();
+                exitFullScreen();
+            }, false);
+            exitButtonCanvas.addEventListener('mouseover', () =>{
+                drawHilightedExitButton();
+            }, false);
+            exitButtonCanvas.addEventListener('mouseout', () =>{
+                drawExitButton();
+            }, false);
+            drawExitButton();
+
+            function transitToTitle(){
+                document.getElementById("titleScreenWrapper").style.display="block";
+                document.getElementById("copyWriteText").style.display="block";
+                document.getElementById("operationText").style.display="none";
+                document.getElementById("exitButtonDiv").style.display="none";
+            }
+
+            function transitToFlash(){
+                document.getElementById("titleScreenWrapper").style.display="none";
+                document.getElementById("copyWriteText").style.display="none";
+                document.getElementById("operationText").style.display="block";
+                document.getElementById("exitButtonDiv").style.display="block";
+            }
             
         </script>
     </body>
