@@ -182,38 +182,17 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
 
-            function drawStartButton(){
-                var canvas = document.getElementById('startButtonCanvas');
-                var ctx = canvas.getContext('2d');
-                // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
-                // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            (function() {
+                var requestAnimationFrame = window.requestAnimationFrame || 
+            　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
+                                        　window.webkitRequestAnimationFrame || 
+            　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
+                window.requestAnimationFrame = requestAnimationFrame;
+            })();
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let controlPosition = {x:0, y:0};
+            var CONTROL_EASE = 0.07;
 
-                // Base Circle
-                ctx.beginPath () ;
-                ctx.arc( canvas.width / 2, canvas.width / 2, canvas.width / 2, 
-                            0, 2 * Math.PI, false ) ;
-                ctx.fillStyle = flashColor[0] ;
-                ctx.fill() ;
-                
-                // Round Triangle
-                ctx.beginPath();
-                let unitLength = 28;
-                ctx.moveTo( canvas.width / 2 - unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
-                ctx.lineTo( canvas.width / 2 + unitLength, canvas.height / 2 );
-                ctx.lineTo( canvas.width / 2 - unitLength/2, canvas.height / 2 + unitLength*1.732/2 );
-                ctx.lineTo( canvas.width / 2 - unitLength/2, canvas.height / 2 - unitLength*1.732/2 );
-                ctx.lineTo( canvas.width / 2 + unitLength, canvas.height / 2 );
-                ctx.strokeStyle = 'rgb(245, 245, 245)';
-                ctx.lineWidth = 10;
-                ctx.lineJoin = "round";
-                ctx.stroke();
-                ctx.fillStyle = 'rgb(245, 245, 245)' ;
-                ctx.fill();
-                
-            }
-            
             function drawAnimationStartButton( event ){
                 var canvas = document.getElementById('startButtonCanvas');
                 var ctx = canvas.getContext('2d');
@@ -223,20 +202,28 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 // Base Circle
-                ctx.beginPath () ;
+                ctx.beginPath();
                 ctx.arc( canvas.width / 2, canvas.width / 2, canvas.width / 2, 
                             0, 2 * Math.PI, false ) ;
                 ctx.fillStyle = flashColor[0];
                 ctx.fill();
 
                 // 2nd color semi-circle on base circle
-                let rect = event.target.getBoundingClientRect();
-                let x = event.clientX - rect.left;
-                let y = event.clientY - rect.top;
+                let x = 0; 
+                let y = 0;
+                if( event !== undefined ){
+                    let rect = event.target.getBoundingClientRect();
+                    x = event.clientX - rect.left;
+                    y = event.clientY - rect.top;
+                }
+                controlPosition.x += (x - controlPosition.x) * CONTROL_EASE;
+                controlPosition.y += (y - controlPosition.y) * CONTROL_EASE;                    
+
                 // For debug
                 // ctx.fillStyle = 'rgb(0,0,0)';
                 // ctx.fillRect(x, y, 10, 10);
-                let startPointRadian = Math.PI / 2 + Math.atan2( canvas.height / 2 - y,canvas.width / 2 - x );
+                // let startPointRadian = Math.PI / 2 + Math.atan2( canvas.height / 2 - y, canvas.width / 2 - x );
+                let startPointRadian = Math.PI / 2 + Math.atan2( canvas.height / 2 - controlPosition.y, canvas.width / 2 - controlPosition.x );
                 ctx.beginPath ();
                 ctx.arc( canvas.width / 2, canvas.width / 2, canvas.width / 2, 
                             startPointRadian, startPointRadian + Math.PI, false ) ;
@@ -343,6 +330,14 @@
                 }
             }
 
+
+            let mousemoveEvent = undefined;
+            function loop(){
+                drawAnimationStartButton( mousemoveEvent );
+                requestAnimationFrame( loop );
+            };
+            loop();
+
             let startButtonCanvas = document.getElementById('startButtonCanvas');
             startButtonCanvas.addEventListener('click', () =>{
                 // console.log( 'startButtonCanvas.onClick' );
@@ -352,12 +347,8 @@
                 requestFullScreen();
             }, false);
             startButtonCanvas.addEventListener('mousemove', (event) =>{
-                drawAnimationStartButton( event );
+                mousemoveEvent = event;
             }, false);
-            startButtonCanvas.addEventListener('mouseout', () =>{
-                drawStartButton();
-            }, false);
-            drawStartButton();
 
             let exitButtonCanvas = document.getElementById('exitButtonCanvas');
             exitButtonCanvas.addEventListener('click', () =>{
@@ -387,6 +378,7 @@
                 document.getElementById("operationText").style.display="block";
                 document.getElementById("exitButtonDiv").style.display="block";
             }
+
             
         </script>
     </body>
