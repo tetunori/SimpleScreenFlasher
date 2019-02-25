@@ -1,0 +1,101 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosansjp.css);
+
+body {
+    overflow: hidden;
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
+    -webkit-background-size: 100%;
+    background-color:whitesmoke;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+canvas{
+    position:absolute;
+}
+
+@media screen and (max-width: 499px) { 
+    div.operationText {
+        position:absolute;
+        right: 10px;
+        bottom:10px;
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba( 255, 255, 255, 0.6 );
+        display:none;
+    }
+    div.titleScreenWrapper {
+        position:absolute;
+        margin-left:30px;
+        margin-right:30px;
+        margin-top:15px;
+    }
+    div.titleText {
+        position: relative;;
+        font-size: 30px;
+        font-weight: 700;
+        color: rgba( 0, 0, 0, 1 );
+    }
+    div.descriptionText {
+        position: relative;;
+        font-size: 12px;
+        font-weight: 500;
+        color: rgba( 0, 0, 0, 1 );
+    }
+    div.copyWriteText {
+        position:absolute;
+        left: 10px;
+        bottom:10px;
+        font-size: 10px;
+        font-weight: 500;
+        color: black;
+    }
+}
+@media screen and (min-width:500px) { 
+    div.operationText {
+        position:absolute;
+        right: 10px;
+        bottom:10px;
+        font-size: 15px;
+        font-weight: 700;
+        color: rgba( 255, 255, 255, 0.6 );
+        display:none;
+    }
+    div.titleScreenWrapper {
+        position:absolute;
+        margin-left:30px;
+        margin-right:30px;
+        margin-top:15px;
+    }
+    div.titleText {
+        position: relative;;
+        font-size: 40px;
+        font-weight: 700;
+        color: rgba( 0, 0, 0, 1 );
+    }
+    div.descriptionText {
+        position: relative;;
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba( 0, 0, 0, 1 );
+    }
+    div.copyWriteText {
+        position:absolute;
+        left: 10px;
+        bottom:10px;
+        font-size: 12px;
+        font-weight: 500;
+        color: black;
+    }
+}
+
+div.exitButtonDiv {
+    position:absolute;
+    margin-left:10px;
+    margin-top:10px;
+    display:none;
+}
+
+
+#copyWriteText a { color:black } 
