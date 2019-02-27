@@ -1,6 +1,7 @@
 const RED_COLOR   = 'rgb( 255,   0,   0)'; // #ff0000
 const GREEN_COLOR = 'rgb(   0, 169,  51)'; // #00a933
 const FLASH_CYCLE_TIME_MSEC = 1100;
+const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;
 const KEYCODE_ESC   = 27;
 const KEYCODE_X     = 88;
 const KEYCODE_S     = 83;
@@ -37,7 +38,17 @@ flashColor[1] = GREEN_COLOR;
 let currentColorIndex = 0; 
 
 let flashIntervalTimer = null;
+let flashForcedStopTimer = null;
 function startFlashIntervalTimer(){
+    if( flashForcedStopTimer === null ){
+        flashForcedStopTimer = setTimeout( () => {
+            stopFlashIntervalTimer();
+            clearFlashCanvas();
+            transitToTitle();
+            exitFullScreen();  
+        }, FLASH_FORCED_STOP_TIME_MSEC );
+    }
+
     if( flashIntervalTimer === null ){
         flashIntervalTimer = setInterval( () => {
             changeFlashColor();
