@@ -1,6 +1,7 @@
+
 <html>
     <head>
-        <meta charset="utf-8" />
+        <meta charset="utf-8">
         <title>Simple Screen Flasher</title>
 
         <!-- webapp settings -->
@@ -10,17 +11,27 @@
 
         <!-- favion -->
         <link rel="icon" href="./images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="index.css">
 
+        <!-- stylesheet -->
+        <link rel="stylesheet" type="text/css" href="index.css">
     </head>
     <body>
+        <!-- Flash Screen -->
         <canvas id="flashCanvas" width="7680" height="4320"></canvas>
+
         <div id="exitButtonDiv" class="exitButtonDiv">
             <canvas id="exitButtonCanvas" width="120" height="120"></canvas>
-        </div> 
+        </div>
+
         <div id="operationText" class="operationText"> 
             "S" : Start/Stop, "←" : Color A, "→" : Color B, "X" : Exit 
         </div>
+        
+        <div id="copyWriteText" class="copyWriteText"> 
+            <a href="https://github.com/tetunori/SimpleScreenFlasher">Hosted on GitHub</a>. Version 0.9. Copyright (c) 2019 Tetsunori NAKAYAMA. MIT License.
+        </div>
+
+        <!-- Title Screen -->
         <div id="titleScreenWrapper" class="titleScreenWrapper">
             <div id="titleText" class="titleText"> 
                 Simple Screen Flasher
@@ -35,11 +46,8 @@
             <br>
             <canvas id="startButtonCanvas" width="120" height="120"></canvas>
         </div>
-        <div id="copyWriteText" class="copyWriteText"> 
-            <a href="https://github.com/tetunori/SimpleScreenFlasher">Hosted on GitHub</a>. Version 0.9. Copyright (c) 2019 Tetsunori NAKAYAMA. MIT License.
-        </div>
 
+        <!-- script -->
         <script type="text/javascript" src="index.js"></script>
-
     </body>
 </html>

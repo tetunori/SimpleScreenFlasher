@@ -1,12 +1,15 @@
+
+/* Noto Sans JP - Google Fonts */ 
 @import url(https://fonts.googleapis.com/earlyaccess/notosansjp.css);
 
+
+/* body */ 
 body {
     overflow: hidden;
     height:100%;
     width:100%;
     margin:0;
     padding:0;
-    -webkit-background-size: 100%;
     background-color:whitesmoke;
     font-family: 'Noto Sans JP', sans-serif;
 }
@@ -15,6 +18,7 @@ canvas{
     position:absolute;
 }
 
+/* Mainly for smartphone */ 
 @media screen and (max-width: 499px) { 
     div.operationText {
         position:absolute;
@@ -52,6 +56,8 @@ canvas{
         color: black;
     }
 }
+
+/* Mainly for tablet or PCs */ 
 @media screen and (min-width:500px) { 
     div.operationText {
         position:absolute;
@@ -96,6 +102,5 @@ div.exitButtonDiv {
     margin-top:10px;
     display:none;
 }
-
 
 #copyWriteText a { color:black } 

@@ -1,25 +1,24 @@
+
+// Global Constants
 const RED_COLOR   = 'rgb( 255,   0,   0)'; // #ff0000
 const GREEN_COLOR = 'rgb(   0, 169,  51)'; // #00a933
-const FLASH_CYCLE_TIME_MSEC = 1100;
-const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;
+
+const FLASH_CYCLE_TIME_MSEC = 1100; // 1.1sec
+const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;  // 4 min
+
 const KEYCODE_ESC   = 27;
 const KEYCODE_X     = 88;
 const KEYCODE_S     = 83;
 const KEYCODE_LEFT  = 37;
 const KEYCODE_RIGHT = 39;
 
+// Handle key events.
 window.addEventListener('keydown', (event) => {
     if ( ( event.keyCode === KEYCODE_X ) || ( event.keyCode === KEYCODE_ESC ) ) {
-        stopFlashIntervalTimer();
-        clearFlashCanvas();
-        transitToTitle();
-        exitFullScreen();
+        stopFlashAndGoToTitle();
     }else if ( event.keyCode === KEYCODE_S ) {
         if( flashIntervalTimer === null ){
-            changeFlashColor();
-            startFlashIntervalTimer();
-            transitToFlash();
-            requestFullScreen();
+            goToFlashScreen();
         }else{
             stopFlashIntervalTimer();
         }
@@ -32,20 +31,46 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
+// Functions on mode transit
+function stopFlashAndGoToTitle(){
+    stopFlashIntervalTimer();
+    clearFlashCanvas();
+    transitToTitle();
+    exitFullScreen();
+}
+
+function goToFlashScreen(){
+    changeFlashColor();
+    startFlashIntervalTimer();
+    transitToFlash();
+    requestFullScreen();
+}
+
+function transitToTitle(){
+    document.getElementById("titleScreenWrapper").style.display="block";
+    document.getElementById("copyWriteText").style.display="block";
+    document.getElementById("operationText").style.display="none";
+    document.getElementById("exitButtonDiv").style.display="none";
+}
+
+function transitToFlash(){
+    document.getElementById("titleScreenWrapper").style.display="none";
+    document.getElementById("copyWriteText").style.display="none";
+    document.getElementById("operationText").style.display="block";
+    document.getElementById("exitButtonDiv").style.display="block";
+}
+
+// Functions on flash canvas
 let flashColor = ['', ''];
 flashColor[0] = RED_COLOR;
 flashColor[1] = GREEN_COLOR;
-let currentColorIndex = 0; 
 
 let flashIntervalTimer = null;
 let flashForcedStopTimer = null;
 function startFlashIntervalTimer(){
     if( flashForcedStopTimer === null ){
         flashForcedStopTimer = setTimeout( () => {
-            stopFlashIntervalTimer();
-            clearFlashCanvas();
-            transitToTitle();
-            exitFullScreen();  
+            stopFlashAndGoToTitle(); 
         }, FLASH_FORCED_STOP_TIME_MSEC );
     }
 
@@ -56,6 +81,19 @@ function startFlashIntervalTimer(){
     }
 }
 
+function stopFlashIntervalTimer(){
+    if( flashForcedStopTimer !== null ){
+        clearTimeout( flashForcedStopTimer );
+        flashForcedStopTimer = null;
+    }
+
+    if( flashIntervalTimer !== null ){
+        clearInterval( flashIntervalTimer );
+        flashIntervalTimer = null;
+    }
+}
+
+let currentColorIndex = 0; 
 function changeFlashColor( index ){
     if( index === undefined ){
         // console.log( 'currentColorIndex : ' + currentColorIndex )
@@ -73,27 +111,22 @@ function changeFlashColor( index ){
 }
 
 function setFlashCanvasColor( color ){
-    var canvas = document.getElementById('flashCanvas');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('flashCanvas');
+    let ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-function stopFlashIntervalTimer(){
-    if( flashIntervalTimer !== null ){
-        clearInterval( flashIntervalTimer );
-        flashIntervalTimer = null;
-    }
+    ctx.fillRect( 0, 0, canvas.width, canvas.height );
 }
 
 function clearFlashCanvas(){
-    var canvas = document.getElementById('flashCanvas');
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let canvas = document.getElementById('flashCanvas');
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect( 0, 0, canvas.width, canvas.height );
 }
 
+// Animation start button
+// https://liginc.co.jp/web/js/130758
 (function() {
-    var requestAnimationFrame = window.requestAnimationFrame || 
+    let requestAnimationFrame = window.requestAnimationFrame || 
 　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
                             　window.webkitRequestAnimationFrame || 
 　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
@@ -102,12 +135,12 @@ function clearFlashCanvas(){
 
 let controlPosition = {x:0, y:0};
 let currentBlur = 0;
-const CONTROL_EASE = 0.07;
+const EASE = 0.07;
 const BLUR_MAX = 8;
 
 function drawAnimationStartButton( event ){
-    var canvas = document.getElementById('startButtonCanvas');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('startButtonCanvas');
+    let ctx = canvas.getContext('2d');
     // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
     // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -126,29 +159,25 @@ function drawAnimationStartButton( event ){
 
     // Base Circle
     ctx.beginPath();
-    let distanceCenterToCursor = Math.hypot(x - X_CENTER, y - Y_CENTER);
+    let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
     let targetBlur = 0;
     if( ( distanceCenterToCursor > RADIUS ) || ( event === undefined ) ){
         targetBlur = 0;
     }else{
         targetBlur = BLUR_MAX;
     }
-    currentBlur += (targetBlur - currentBlur) * CONTROL_EASE;
+    currentBlur += ( targetBlur - currentBlur ) * EASE;
     ctx.shadowBlur = currentBlur;
     ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
-    ctx.arc( X_CENTER, Y_CENTER, RADIUS, 
-                0, 2 * Math.PI, false ) ;
+    ctx.arc( X_CENTER, Y_CENTER, RADIUS, 0, 2 * Math.PI, false ) ;
     ctx.fillStyle = flashColor[0];
     ctx.fill();
     ctx.shadowBlur = 0;
 
     // 2nd color semi-circle on base circle
-    controlPosition.x += (x - controlPosition.x) * CONTROL_EASE;
-    controlPosition.y += (y - controlPosition.y) * CONTROL_EASE;                    
+    controlPosition.x += ( x - controlPosition.x ) * EASE;
+    controlPosition.y += ( y - controlPosition.y ) * EASE;
 
-    // For debug
-    // ctx.fillStyle = 'rgb(0,0,0)';
-    // ctx.fillRect(x, y, 10, 10);
     let startPointRadian = Math.PI / 2 + Math.atan2( Y_CENTER - controlPosition.y, X_CENTER - controlPosition.x );
     ctx.beginPath ();
     ctx.arc( X_CENTER, Y_CENTER, RADIUS, 
@@ -174,10 +203,10 @@ function drawAnimationStartButton( event ){
 }
 
 function drawExitButton(){
-    var canvas = document.getElementById('exitButtonCanvas');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('exitButtonCanvas');
+    let ctx = canvas.getContext('2d');
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect( 0, 0, canvas.width, canvas.height );
 
     const X_CENTER = canvas.width / 2;
     const Y_CENTER = canvas.width / 2;
@@ -197,8 +226,8 @@ function drawExitButton(){
 }
 
 function drawHilightedExitButton(){
-    var canvas = document.getElementById('exitButtonCanvas');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('exitButtonCanvas');
+    let ctx = canvas.getContext('2d');
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -217,18 +246,48 @@ function drawHilightedExitButton(){
     ctx.lineWidth = 10;
     ctx.lineJoin = "round";
     ctx.stroke();
-    // ctx.fillStyle = 'rgb(245, 245, 245)' ;
-    // ctx.fill();             
 }
+
+// Mouse events.
+let mousemoveEvent = undefined;
+function loop(){
+    drawAnimationStartButton( mousemoveEvent );
+    requestAnimationFrame( loop );
+};
+loop();
+
+let startButtonCanvas = document.getElementById('startButtonCanvas');
+startButtonCanvas.addEventListener('click', () =>{
+    // console.log( 'startButtonCanvas.onClick' );
+    goToFlashScreen();
+}, false);
+startButtonCanvas.addEventListener('mousemove', (event) =>{
+    mousemoveEvent = event;
+}, false);
+startButtonCanvas.addEventListener('mouseout', () =>{
+    mousemoveEvent = undefined;
+}, false);
+
+let exitButtonCanvas = document.getElementById('exitButtonCanvas');
+exitButtonCanvas.addEventListener('click', () =>{
+    stopFlashAndGoToTitle();
+}, false);
+exitButtonCanvas.addEventListener('mouseover', () =>{
+    drawHilightedExitButton();
+}, false);
+exitButtonCanvas.addEventListener('mouseout', () =>{
+    drawExitButton();
+}, false);
+drawExitButton();
 
 // Reference : https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
 function requestFullScreen(){
-    var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+    let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
         (document.msFullscreenElement && document.msFullscreenElement !== null);
 
-    var docElm = document.documentElement;
+    let docElm = document.documentElement;
     if (!isInFullScreen) {
         if (docElm.requestFullscreen) {
             docElm.requestFullscreen();
@@ -243,12 +302,11 @@ function requestFullScreen(){
 }
 
 function exitFullScreen(){
-    var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+    let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
         (document.msFullscreenElement && document.msFullscreenElement !== null);
 
-    var docElm = document.documentElement;
     if (isInFullScreen) {
         if (document.exitFullscreen) {
             document.exitFullscreen();
@@ -261,56 +319,3 @@ function exitFullScreen(){
         }
     }
 }
-
-
-let mousemoveEvent = undefined;
-function loop(){
-    drawAnimationStartButton( mousemoveEvent );
-    requestAnimationFrame( loop );
-};
-loop();
-
-let startButtonCanvas = document.getElementById('startButtonCanvas');
-startButtonCanvas.addEventListener('click', () =>{
-    // console.log( 'startButtonCanvas.onClick' );
-    changeFlashColor();
-    startFlashIntervalTimer();
-    transitToFlash();
-    requestFullScreen();
-}, false);
-startButtonCanvas.addEventListener('mousemove', (event) =>{
-    mousemoveEvent = event;
-}, false);
-startButtonCanvas.addEventListener('mouseout', () =>{
-    mousemoveEvent = undefined;
-}, false);
-
-let exitButtonCanvas = document.getElementById('exitButtonCanvas');
-exitButtonCanvas.addEventListener('click', () =>{
-    stopFlashIntervalTimer();
-    clearFlashCanvas();
-    transitToTitle();
-    exitFullScreen();
-}, false);
-exitButtonCanvas.addEventListener('mouseover', () =>{
-    drawHilightedExitButton();
-}, false);
-exitButtonCanvas.addEventListener('mouseout', () =>{
-    drawExitButton();
-}, false);
-drawExitButton();
-
-function transitToTitle(){
-    document.getElementById("titleScreenWrapper").style.display="block";
-    document.getElementById("copyWriteText").style.display="block";
-    document.getElementById("operationText").style.display="none";
-    document.getElementById("exitButtonDiv").style.display="none";
-}
-
-function transitToFlash(){
-    document.getElementById("titleScreenWrapper").style.display="none";
-    document.getElementById("copyWriteText").style.display="none";
-    document.getElementById("operationText").style.display="block";
-    document.getElementById("exitButtonDiv").style.display="block";
-}
-
