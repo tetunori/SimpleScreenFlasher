@@ -234,7 +234,14 @@ function drawHilightedExitButton(){
     const X_CENTER = canvas.width / 2;
     const Y_CENTER = canvas.width / 2;
 
-   // Round Triangle
+    // Circle
+    ctx.beginPath();
+    const RADIUS = 0.9 * canvas.width / 2;
+    ctx.arc( X_CENTER, Y_CENTER, RADIUS, 0, 2 * Math.PI, false ) ;
+    ctx.fillStyle = 'rgba( 255, 255, 255, 0.2)';
+    ctx.fill();
+
+    // Round Triangle
     ctx.beginPath();
     let unitLength = 28;
     ctx.moveTo( X_CENTER + unitLength/2, Y_CENTER - unitLength*Math.sqrt(3)/2 );
@@ -246,6 +253,7 @@ function drawHilightedExitButton(){
     ctx.lineWidth = 10;
     ctx.lineJoin = "round";
     ctx.stroke();
+    
 }
 
 // Mouse events.
