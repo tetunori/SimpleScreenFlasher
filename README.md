@@ -1,6 +1,9 @@
 # SimpleScreenFlasher
-A simple screen flasher. For flashing a screen with a few colors by a simple operation.
+A simple screen flasher.
 
+# Description
+For flashing a screen with a few colors by a simple operation.
+You can try (here)[https://tetunori.github.io/SimpleScreenFlasher/].
 
 # Usage
 
