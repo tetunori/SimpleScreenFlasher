@@ -16,4 +16,11 @@ Tetsunori NAKAYAMA.
 by EUPHRATES + Masahiko Sato.
 http://www.bijutsu.press/books/2007/09/20070926.html
 
+canvas
+
+animation
+https://liginc.co.jp/web/js/130758
+
+set/exit Full screen
+https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
 
