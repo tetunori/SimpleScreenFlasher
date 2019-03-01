@@ -1,5 +1,5 @@
 # SimpleScreenFlasher
-A simple screen flasher. 
+A simple screen flasher.  
 <img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_00.png" width="320px">
 
 # Description
@@ -10,11 +10,11 @@ You can try [here](https://tetunori.github.io/SimpleScreenFlasher/).
 
 # Usage
 ## Standard usage
-Please read the warning statement first, then click the PLAY button.
+Please read the warning statement first, then click the PLAY button.  
 <img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_01.png" width="320px">
 
 Screen flash starts automatically.  
-You can exit flashing mode by clicking EXIT button located in the upper left of the screen or pressing "X" key.
+You can exit flashing mode by clicking EXIT button located in the upper left of the screen or pressing "X" key.  
 <img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_02.png" width="320px">
 
 ## Manual control
