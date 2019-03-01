@@ -1,6 +1,6 @@
 # SimpleScreenFlasher
 A simple screen flasher. 
-<Screen capture>  
+<img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_00.png">
 
 # Description
 A simple tool that allows you to flash the entire screen with two complementary colors.  
@@ -11,11 +11,11 @@ You can try [here](https://tetunori.github.io/SimpleScreenFlasher/).
 # Usage
 ## Standard usage
 Please read the warning statement first, then click the PLAY button.
-<Screen capture>  
+<img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_01.png">
 
 Screen flash starts automatically.  
 You can exit flashing mode by clicking EXIT button located in the upper left of the screen or pressing "X" key.
-<Screen capture>  
+<img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_02.png">
 
 ## Manual control
 "S" key : Start/Stop flashing.  
