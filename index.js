@@ -16,14 +16,17 @@ const RYB_WHEEL_COLOR_ARRAY = [ RED_ORANGE_COLOR, RED_COLOR, RED_VIOLET_COLOR, V
                                     BLUE_VIOLET_COLOR, BLUE_COLOR, BLUE_GREEN_COLOR, GREEN_COLOR, 
                                         YELLOW_GREEN_COLOR, YELLOW_COLOR, YELLOW_ORANGE_COLOR, ORANGE_COLOR ];
 
-const FLASH_CYCLE_TIME_MSEC = 1100; // 1.1sec
+const FLASH_CYCLE_TIME_MSEC_DEFAULT = 1100; // 1.1sec
+let flashCycleTime_msec = FLASH_CYCLE_TIME_MSEC_DEFAULT;
 const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;  // 4 min
 
 const KEYCODE_ESC   = 27;
 const KEYCODE_X     = 88;
 const KEYCODE_S     = 83;
 const KEYCODE_LEFT  = 37;
+const KEYCODE_UP    = 38;
 const KEYCODE_RIGHT = 39;
+const KEYCODE_DOWN  = 40;
 
 // Handle key events.
 window.addEventListener('keydown', (event) => {
@@ -41,6 +44,14 @@ window.addEventListener('keydown', (event) => {
     }else if ( event.keyCode === KEYCODE_RIGHT ) {
         stopFlashIntervalTimer();
         changeFlashColor( 1 );
+    }else if ( event.keyCode === KEYCODE_UP ) {
+        stopFlashIntervalTimer();
+        makeFastFlashInterval();
+        startFlashIntervalTimer();
+    }else if ( event.keyCode === KEYCODE_DOWN ) {
+        stopFlashIntervalTimer();
+        makeSlowFlashInterval();
+        startFlashIntervalTimer();
     }
 });
 
@@ -90,7 +101,7 @@ function startFlashIntervalTimer(){
     if( flashIntervalTimer === null ){
         flashIntervalTimer = setInterval( () => {
             changeFlashColor();
-        }, FLASH_CYCLE_TIME_MSEC );
+        }, flashCycleTime_msec );
     }
 }
 
@@ -104,6 +115,45 @@ function stopFlashIntervalTimer(){
         clearInterval( flashIntervalTimer );
         flashIntervalTimer = null;
     }
+}
+
+const MAX_FLASHCYCLETIME_MSEC = 5000;
+const MIN_FLASHCYCLETIME_MSEC = 300;
+function makeFastFlashInterval(){
+    if( flashCycleTime_msec > MIN_FLASHCYCLETIME_MSEC ){
+        flashCycleTime_msec -= 50;
+    }
+    changeFlashIntervalText( flashCycleTime_msec );
+    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+}
+
+function makeSlowFlashInterval(){
+    if( flashCycleTime_msec < MAX_FLASHCYCLETIME_MSEC ){
+        flashCycleTime_msec += 50;
+    }
+    changeFlashIntervalText( flashCycleTime_msec );
+    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+}
+
+function changeFlashIntervalText( intervalTime ){
+    const FLASH_INTERVAL_TEXT_TEMPLATE_A = 'Flash Interval : ';
+    const FLASH_INTERVAL_TEXT_TEMPLATE_B = ' msec'
+    const FLASH_INTERVAL_TEXT_TEMPLATE_C = ', "↑" : Faster Interval, "↓" : Slower Interval';
+    document.getElementById("flashIntervalText").innerHTML = 
+        FLASH_INTERVAL_TEXT_TEMPLATE_A + intervalTime + 
+            FLASH_INTERVAL_TEXT_TEMPLATE_B;
+    
+    if( intervalTime === FLASH_CYCLE_TIME_MSEC_DEFAULT ){
+        document.getElementById("flashIntervalText").innerHTML += '(default)'
+    }else if( intervalTime === MAX_FLASHCYCLETIME_MSEC ){
+        document.getElementById("flashIntervalText").innerHTML += '(slowest)'
+    }else if( intervalTime === MIN_FLASHCYCLETIME_MSEC ){
+        document.getElementById("flashIntervalText").innerHTML += '(fastest)'
+    }
+            
+    document.getElementById("flashIntervalText").innerHTML += 
+        FLASH_INTERVAL_TEXT_TEMPLATE_C;
+    
 }
 
 let currentColorIndex = 0; 
@@ -335,7 +385,7 @@ function selectFlashColorsFromSettingMenu( event ){
             }
         }
     }
-    
+
 }
 
 function drawExitButton(){
