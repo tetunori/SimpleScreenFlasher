@@ -227,8 +227,17 @@ function drawSettingMenu( event ){
     const X_CENTER = 3 * canvas.width / 4;
     const Y_CENTER = canvas.height / 2;
 
+    let x = 0; 
+    let y = 0;
+    if( event !== undefined ){
+        let rect = event.target.getBoundingClientRect();
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+    }
+
     // Color Wheel Base Circle
-    for( let iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+    let iteration = 0
+    for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
         ctx.beginPath();
         ctx.fillStyle = RYB_WHEEL_COLOR_ARRAY[ iteration ];
         ctx.moveTo( X_CENTER, Y_CENTER );
@@ -238,6 +247,46 @@ function drawSettingMenu( event ){
         // ctx.stroke();
     }
 
+    // Hi-light selected color
+    for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+        if( ( RYB_WHEEL_COLOR_ARRAY[ iteration ] === flashColor[0] ) || 
+                ( RYB_WHEEL_COLOR_ARRAY[ iteration ] === flashColor[1] ) ){
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgb(64, 64, 64)';
+            ctx.moveTo( X_CENTER, Y_CENTER );
+            ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+
+    let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
+    let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
+    let selectTargetIndex = 0;
+    for( iteration = 0; iteration < 6; iteration++ ){
+        if( ( relAngle > iteration * Math.PI/6 ) && ( relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 6 + iteration;
+            break;
+        }
+        if( ( -relAngle > iteration * Math.PI/6 ) && ( -relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 5 - iteration;
+            break;
+        }
+    }
+    if( distanceCenterToCursor < RADIUS ){
+        // console.log( selectTargetIndex );
+        for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+        if( ( iteration === selectTargetIndex ) || 
+                ( Math.abs( iteration - selectTargetIndex ) === 6 ) ){
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgb(0, 0, 0)';
+                ctx.moveTo( X_CENTER, Y_CENTER );
+                ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+    }
 }
 
 function drawExitButton(){
@@ -295,10 +344,11 @@ function drawHilightedExitButton(){
 }
 
 // Mouse events.
-let mousemoveEvent = undefined;
+let mousemoveEventStartButton = undefined;
+let mousemoveEventSettingMenu = undefined;
 function loop(){
-    drawAnimationStartButton( mousemoveEvent );
-    drawSettingMenu( mousemoveEvent );
+    drawAnimationStartButton( mousemoveEventStartButton );
+    drawSettingMenu( mousemoveEventSettingMenu );
     requestAnimationFrame( loop );
 };
 loop();
@@ -309,10 +359,21 @@ startButtonCanvas.addEventListener('click', () =>{
     goToFlashScreen();
 }, false);
 startButtonCanvas.addEventListener('mousemove', (event) =>{
-    mousemoveEvent = event;
+    mousemoveEventStartButton = event;
 }, false);
 startButtonCanvas.addEventListener('mouseout', () =>{
-    mousemoveEvent = undefined;
+    mousemoveEventStartButton = undefined;
+}, false);
+
+let settingMenuCanvas = document.getElementById('settingMenuCanvas');
+settingMenuCanvas.addEventListener('click', () =>{
+    // console.log( 'settingMenuCanvas.onClick' );
+}, false);
+settingMenuCanvas.addEventListener('mousemove', (event) =>{
+    mousemoveEventSettingMenu = event;
+}, false);
+settingMenuCanvas.addEventListener('mouseout', () =>{
+    mousemoveEventSettingMenu = undefined;
 }, false);
 
 let exitButtonCanvas = document.getElementById('exitButtonCanvas');
