@@ -260,6 +260,7 @@ function drawSettingMenu( event ){
         }
     }
 
+    // More hi-light selec target
     let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
     let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
     let selectTargetIndex = 0;
@@ -273,10 +274,11 @@ function drawSettingMenu( event ){
             break;
         }
     }
+
     if( distanceCenterToCursor < RADIUS ){
         // console.log( selectTargetIndex );
         for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
-        if( ( iteration === selectTargetIndex ) || 
+            if( ( iteration === selectTargetIndex ) || 
                 ( Math.abs( iteration - selectTargetIndex ) === 6 ) ){
                 ctx.beginPath();
                 ctx.strokeStyle = 'rgb(0, 0, 0)';
@@ -287,6 +289,53 @@ function drawSettingMenu( event ){
             }
         }
     }
+}
+
+function selectFlashColorsFromSettingMenu( event ){
+
+    let canvas = document.getElementById('settingMenuCanvas');
+    let ctx = canvas.getContext('2d');
+
+    const RADIUS = 0.9 * canvas.height / 2;
+    const X_CENTER = 3 * canvas.width / 4;
+    const Y_CENTER = canvas.height / 2;
+
+    let x = 0; 
+    let y = 0;
+    if( event !== undefined ){
+        let rect = event.target.getBoundingClientRect();
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+    }
+
+    let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
+    let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
+    let selectTargetIndex = 0;
+    for( iteration = 0; iteration < 6; iteration++ ){
+        if( ( relAngle > iteration * Math.PI/6 ) && ( relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 6 + iteration;
+            break;
+        }
+        if( ( -relAngle > iteration * Math.PI/6 ) && ( -relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 5 - iteration;
+            break;
+        }
+    }
+
+    if( distanceCenterToCursor < RADIUS ){
+        for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+            if( iteration === selectTargetIndex ){
+                flashColor[0] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex ];
+                if( iteration > 5 ){
+                    flashColor[1] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex - 6 ];
+                }else{
+                    flashColor[1] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex + 6 ];
+                }
+                break;
+            }
+        }
+    }
+    
 }
 
 function drawExitButton(){
@@ -366,8 +415,9 @@ startButtonCanvas.addEventListener('mouseout', () =>{
 }, false);
 
 let settingMenuCanvas = document.getElementById('settingMenuCanvas');
-settingMenuCanvas.addEventListener('click', () =>{
+settingMenuCanvas.addEventListener('click', (event) =>{
     // console.log( 'settingMenuCanvas.onClick' );
+    selectFlashColorsFromSettingMenu( event );
 }, false);
 settingMenuCanvas.addEventListener('mousemove', (event) =>{
     mousemoveEventSettingMenu = event;
