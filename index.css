@@ -19,7 +19,7 @@ canvas{
 }
 
 /* Mainly for smartphone */ 
-@media screen and (max-width: 499px) { 
+@media screen and (max-width: 499px), screen and (max-height: 449px) { 
     div.operationText {
         position:absolute;
         right: 10px;
@@ -58,7 +58,7 @@ canvas{
 }
 
 /* Mainly for tablet or PCs */ 
-@media screen and (min-width:500px) { 
+@media screen and (min-width:500px) and (min-height:450px) { 
     div.operationText {
         position:absolute;
         right: 10px;
