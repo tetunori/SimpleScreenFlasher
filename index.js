@@ -1,16 +1,32 @@
 
 // Global Constants
-const RED_COLOR   = 'rgb( 255,   0,   0)'; // #ff0000
-const GREEN_COLOR = 'rgb(   0, 169,  51)'; // #00a933
+const RED_ORANGE_COLOR    = 'rgb( 255,  64,   0)'; // #ff4000
+const RED_COLOR           = 'rgb( 255,   0,   0)'; // #ff0000
+const RED_VIOLET_COLOR    = 'rgb( 191,   0,  65)'; // #bf0041
+const VIOLET_COLOR        = 'rgb( 128,   0, 128)'; // #800080
+const BLUE_VIOLET_COLOR   = 'rgb(  85,  48, 141)'; // #55308d
+const BLUE_COLOR          = 'rgb(  42,  96, 153)'; // #2a6099
+const BLUE_GREEN_COLOR    = 'rgb(  21, 132, 102)'; // #158466
+const GREEN_COLOR         = 'rgb(   0, 169,  51)'; // #00a933
+const YELLOW_GREEN_COLOR  = 'rgb( 129, 212,  26)'; // #81d41a
+const YELLOW_COLOR        = 'rgb( 255, 255,   0)'; // #ffff00
+const YELLOW_ORANGE_COLOR = 'rgb( 255, 191,   0)'; // #ffbf00
+const ORANGE_COLOR        = 'rgb( 255, 128,   0)'; // #ff8000
+const RYB_WHEEL_COLOR_ARRAY = [ RED_ORANGE_COLOR, RED_COLOR, RED_VIOLET_COLOR, VIOLET_COLOR, 
+                                    BLUE_VIOLET_COLOR, BLUE_COLOR, BLUE_GREEN_COLOR, GREEN_COLOR, 
+                                        YELLOW_GREEN_COLOR, YELLOW_COLOR, YELLOW_ORANGE_COLOR, ORANGE_COLOR ];
 
-const FLASH_CYCLE_TIME_MSEC = 1100; // 1.1sec
+const FLASH_CYCLE_TIME_MSEC_DEFAULT = 1100; // 1.1sec
+let flashCycleTime_msec = FLASH_CYCLE_TIME_MSEC_DEFAULT;
 const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;  // 4 min
 
 const KEYCODE_ESC   = 27;
 const KEYCODE_X     = 88;
 const KEYCODE_S     = 83;
 const KEYCODE_LEFT  = 37;
+const KEYCODE_UP    = 38;
 const KEYCODE_RIGHT = 39;
+const KEYCODE_DOWN  = 40;
 
 // Handle key events.
 window.addEventListener('keydown', (event) => {
@@ -28,6 +44,14 @@ window.addEventListener('keydown', (event) => {
     }else if ( event.keyCode === KEYCODE_RIGHT ) {
         stopFlashIntervalTimer();
         changeFlashColor( 1 );
+    }else if ( event.keyCode === KEYCODE_UP ) {
+        stopFlashIntervalTimer();
+        makeFastFlashInterval();
+        startFlashIntervalTimer();
+    }else if ( event.keyCode === KEYCODE_DOWN ) {
+        stopFlashIntervalTimer();
+        makeSlowFlashInterval();
+        startFlashIntervalTimer();
     }
 });
 
@@ -77,7 +101,7 @@ function startFlashIntervalTimer(){
     if( flashIntervalTimer === null ){
         flashIntervalTimer = setInterval( () => {
             changeFlashColor();
-        }, FLASH_CYCLE_TIME_MSEC );
+        }, flashCycleTime_msec );
     }
 }
 
@@ -91,6 +115,45 @@ function stopFlashIntervalTimer(){
         clearInterval( flashIntervalTimer );
         flashIntervalTimer = null;
     }
+}
+
+const MAX_FLASHCYCLETIME_MSEC = 5000;
+const MIN_FLASHCYCLETIME_MSEC = 300;
+function makeFastFlashInterval(){
+    if( flashCycleTime_msec > MIN_FLASHCYCLETIME_MSEC ){
+        flashCycleTime_msec -= 50;
+    }
+    changeFlashIntervalText( flashCycleTime_msec );
+    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+}
+
+function makeSlowFlashInterval(){
+    if( flashCycleTime_msec < MAX_FLASHCYCLETIME_MSEC ){
+        flashCycleTime_msec += 50;
+    }
+    changeFlashIntervalText( flashCycleTime_msec );
+    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+}
+
+function changeFlashIntervalText( intervalTime ){
+    const FLASH_INTERVAL_TEXT_TEMPLATE_A = 'Flash Interval : ';
+    const FLASH_INTERVAL_TEXT_TEMPLATE_B = ' msec'
+    const FLASH_INTERVAL_TEXT_TEMPLATE_C = ', "↑" : Faster Interval, "↓" : Slower Interval';
+    document.getElementById("flashIntervalText").innerHTML = 
+        FLASH_INTERVAL_TEXT_TEMPLATE_A + intervalTime + 
+            FLASH_INTERVAL_TEXT_TEMPLATE_B;
+    
+    if( intervalTime === FLASH_CYCLE_TIME_MSEC_DEFAULT ){
+        document.getElementById("flashIntervalText").innerHTML += '(default)'
+    }else if( intervalTime === MAX_FLASHCYCLETIME_MSEC ){
+        document.getElementById("flashIntervalText").innerHTML += '(slowest)'
+    }else if( intervalTime === MIN_FLASHCYCLETIME_MSEC ){
+        document.getElementById("flashIntervalText").innerHTML += '(fastest)'
+    }
+            
+    document.getElementById("flashIntervalText").innerHTML += 
+        FLASH_INTERVAL_TEXT_TEMPLATE_C;
+    
 }
 
 let currentColorIndex = 0; 
@@ -202,6 +265,129 @@ function drawAnimationStartButton( event ){
     
 }
 
+function drawSettingMenu( event ){
+    let canvas = document.getElementById('settingMenuCanvas');
+    let ctx = canvas.getContext('2d');
+    // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const RADIUS = 0.9 * canvas.height / 2;
+    const X_CENTER = 3 * canvas.width / 4;
+    const Y_CENTER = canvas.height / 2;
+
+    let x = 0; 
+    let y = 0;
+    if( event !== undefined ){
+        let rect = event.target.getBoundingClientRect();
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+    }
+
+    // Color Wheel Base Circle
+    let iteration = 0
+    for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+        ctx.beginPath();
+        ctx.fillStyle = RYB_WHEEL_COLOR_ARRAY[ iteration ];
+        ctx.moveTo( X_CENTER, Y_CENTER );
+        ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+        ctx.closePath();
+        ctx.fill();
+        // ctx.stroke();
+    }
+
+    // Hi-light selected color
+    for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+        if( ( RYB_WHEEL_COLOR_ARRAY[ iteration ] === flashColor[0] ) || 
+                ( RYB_WHEEL_COLOR_ARRAY[ iteration ] === flashColor[1] ) ){
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgb(64, 64, 64)';
+            ctx.moveTo( X_CENTER, Y_CENTER );
+            ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+
+    // More hi-light selec target
+    let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
+    let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
+    let selectTargetIndex = 0;
+    for( iteration = 0; iteration < 6; iteration++ ){
+        if( ( relAngle > iteration * Math.PI/6 ) && ( relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 6 + iteration;
+            break;
+        }
+        if( ( -relAngle > iteration * Math.PI/6 ) && ( -relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 5 - iteration;
+            break;
+        }
+    }
+
+    if( distanceCenterToCursor < RADIUS ){
+        // console.log( selectTargetIndex );
+        for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+            if( ( iteration === selectTargetIndex ) || 
+                ( Math.abs( iteration - selectTargetIndex ) === 6 ) ){
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgb(0, 0, 0)';
+                ctx.moveTo( X_CENTER, Y_CENTER );
+                ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function selectFlashColorsFromSettingMenu( event ){
+
+    let canvas = document.getElementById('settingMenuCanvas');
+    let ctx = canvas.getContext('2d');
+
+    const RADIUS = 0.9 * canvas.height / 2;
+    const X_CENTER = 3 * canvas.width / 4;
+    const Y_CENTER = canvas.height / 2;
+
+    let x = 0; 
+    let y = 0;
+    if( event !== undefined ){
+        let rect = event.target.getBoundingClientRect();
+        x = event.clientX - rect.left;
+        y = event.clientY - rect.top;
+    }
+
+    let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
+    let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
+    let selectTargetIndex = 0;
+    for( iteration = 0; iteration < 6; iteration++ ){
+        if( ( relAngle > iteration * Math.PI/6 ) && ( relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 6 + iteration;
+            break;
+        }
+        if( ( -relAngle > iteration * Math.PI/6 ) && ( -relAngle <= ( iteration + 1 ) * Math.PI/6 ) ){
+            selectTargetIndex = 5 - iteration;
+            break;
+        }
+    }
+
+    if( distanceCenterToCursor < RADIUS ){
+        for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+            if( iteration === selectTargetIndex ){
+                flashColor[0] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex ];
+                if( iteration > 5 ){
+                    flashColor[1] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex - 6 ];
+                }else{
+                    flashColor[1] = RYB_WHEEL_COLOR_ARRAY[ selectTargetIndex + 6 ];
+                }
+                break;
+            }
+        }
+    }
+
+}
+
 function drawExitButton(){
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
@@ -257,9 +443,11 @@ function drawHilightedExitButton(){
 }
 
 // Mouse events.
-let mousemoveEvent = undefined;
+let mousemoveEventStartButton = undefined;
+let mousemoveEventSettingMenu = undefined;
 function loop(){
-    drawAnimationStartButton( mousemoveEvent );
+    drawAnimationStartButton( mousemoveEventStartButton );
+    drawSettingMenu( mousemoveEventSettingMenu );
     requestAnimationFrame( loop );
 };
 loop();
@@ -270,10 +458,22 @@ startButtonCanvas.addEventListener('click', () =>{
     goToFlashScreen();
 }, false);
 startButtonCanvas.addEventListener('mousemove', (event) =>{
-    mousemoveEvent = event;
+    mousemoveEventStartButton = event;
 }, false);
 startButtonCanvas.addEventListener('mouseout', () =>{
-    mousemoveEvent = undefined;
+    mousemoveEventStartButton = undefined;
+}, false);
+
+let settingMenuCanvas = document.getElementById('settingMenuCanvas');
+settingMenuCanvas.addEventListener('click', (event) =>{
+    // console.log( 'settingMenuCanvas.onClick' );
+    selectFlashColorsFromSettingMenu( event );
+}, false);
+settingMenuCanvas.addEventListener('mousemove', (event) =>{
+    mousemoveEventSettingMenu = event;
+}, false);
+settingMenuCanvas.addEventListener('mouseout', () =>{
+    mousemoveEventSettingMenu = undefined;
 }, false);
 
 let exitButtonCanvas = document.getElementById('exitButtonCanvas');
