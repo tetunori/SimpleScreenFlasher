@@ -20,6 +20,7 @@ You can exit flashing mode by clicking EXIT button located in the upper left of 
 ## Advanced Usage
 ### Change Flash Colors
 Please select two colors in the following color wheel before clicking the PLAY button.  
+<img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_13.png" width="160px">
 
 ### Manual control
 "S" key : Start/Stop flashing.  
