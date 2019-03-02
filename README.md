@@ -1,4 +1,4 @@
-# SimpleScreenFlasher
+# Simple Screen Flasher
 A simple screen flasher.  
 <img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_00.png" width="640px">
 
