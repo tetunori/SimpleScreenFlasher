@@ -1,7 +1,20 @@
 
 // Global Constants
-const RED_COLOR   = 'rgb( 255,   0,   0)'; // #ff0000
-const GREEN_COLOR = 'rgb(   0, 169,  51)'; // #00a933
+const RED_ORANGE_COLOR    = 'rgb( 255,  64,   0)'; // #ff4000
+const RED_COLOR           = 'rgb( 255,   0,   0)'; // #ff0000
+const RED_VIOLET_COLOR    = 'rgb( 191,   0,  65)'; // #bf0041
+const VIOLET_COLOR        = 'rgb( 128,   0, 128)'; // #800080
+const BLUE_VIOLET_COLOR   = 'rgb(  85,  48, 141)'; // #55308d
+const BLUE_COLOR          = 'rgb(  42,  96, 153)'; // #2a6099
+const BLUE_GREEN_COLOR    = 'rgb(  21, 132, 102)'; // #158466
+const GREEN_COLOR         = 'rgb(   0, 169,  51)'; // #00a933
+const YELLOW_GREEN_COLOR  = 'rgb( 129, 212,  26)'; // #81d41a
+const YELLOW_COLOR        = 'rgb( 255, 255,   0)'; // #ffff00
+const YELLOW_ORANGE_COLOR = 'rgb( 255, 191,   0)'; // #ffbf00
+const ORANGE_COLOR        = 'rgb( 255, 128,   0)'; // #ff8000
+const RYB_WHEEL_COLOR_ARRAY = [ RED_ORANGE_COLOR, RED_COLOR, RED_VIOLET_COLOR, VIOLET_COLOR, 
+                                    BLUE_VIOLET_COLOR, BLUE_COLOR, BLUE_GREEN_COLOR, GREEN_COLOR, 
+                                        YELLOW_GREEN_COLOR, YELLOW_COLOR, YELLOW_ORANGE_COLOR, ORANGE_COLOR ];
 
 const FLASH_CYCLE_TIME_MSEC = 1100; // 1.1sec
 const FLASH_FORCED_STOP_TIME_MSEC = 1000 * 60 * 4;  // 4 min
@@ -202,6 +215,31 @@ function drawAnimationStartButton( event ){
     
 }
 
+function drawSettingMenu( event ){
+    let canvas = document.getElementById('settingMenuCanvas');
+    let ctx = canvas.getContext('2d');
+    // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const RADIUS = 0.9 * canvas.height / 2;
+    const X_CENTER = 3 * canvas.width / 4;
+    const Y_CENTER = canvas.height / 2;
+
+    // Color Wheel Base Circle
+    for( let iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
+        ctx.beginPath();
+        ctx.fillStyle = RYB_WHEEL_COLOR_ARRAY[ iteration ];
+        ctx.moveTo( X_CENTER, Y_CENTER );
+        ctx.arc( X_CENTER, Y_CENTER, RADIUS, iteration * Math.PI/6, ( iteration + 1 ) * Math.PI/6, false ) ;
+        ctx.closePath();
+        ctx.fill();
+        // ctx.stroke();
+    }
+
+}
+
 function drawExitButton(){
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
@@ -260,6 +298,7 @@ function drawHilightedExitButton(){
 let mousemoveEvent = undefined;
 function loop(){
     drawAnimationStartButton( mousemoveEvent );
+    drawSettingMenu( mousemoveEvent );
     requestAnimationFrame( loop );
 };
 loop();
