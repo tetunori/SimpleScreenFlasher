@@ -56,28 +56,28 @@ window.addEventListener('keydown', (event) => {
 });
 
 // Functions on mode transit
-function stopFlashAndGoToTitle(){
+const stopFlashAndGoToTitle = () => {
     stopFlashIntervalTimer();
     clearFlashCanvas();
     transitToTitle();
     exitFullScreen();
 }
 
-function goToFlashScreen(){
+const goToFlashScreen = () => {
     changeFlashColor();
     startFlashIntervalTimer();
     transitToFlash();
     requestFullScreen();
 }
 
-function transitToTitle(){
+const transitToTitle = () => {
     document.getElementById("titleScreenWrapper").style.display="block";
     document.getElementById("copyWriteText").style.display="block";
     document.getElementById("operationText").style.display="none";
     document.getElementById("exitButtonDiv").style.display="none";
 }
 
-function transitToFlash(){
+const transitToFlash = () => {
     document.getElementById("titleScreenWrapper").style.display="none";
     document.getElementById("copyWriteText").style.display="none";
     document.getElementById("operationText").style.display="block";
@@ -91,7 +91,7 @@ flashColor[1] = GREEN_COLOR;
 
 let flashIntervalTimer = null;
 let flashForcedStopTimer = null;
-function startFlashIntervalTimer(){
+const startFlashIntervalTimer = () => {
     if( flashForcedStopTimer === null ){
         flashForcedStopTimer = setTimeout( () => {
             stopFlashAndGoToTitle(); 
@@ -105,7 +105,7 @@ function startFlashIntervalTimer(){
     }
 }
 
-function stopFlashIntervalTimer(){
+const stopFlashIntervalTimer = () => {
     if( flashForcedStopTimer !== null ){
         clearTimeout( flashForcedStopTimer );
         flashForcedStopTimer = null;
@@ -119,7 +119,7 @@ function stopFlashIntervalTimer(){
 
 const MAX_FLASHCYCLETIME_MSEC = 5000;
 const MIN_FLASHCYCLETIME_MSEC = 300;
-function makeFastFlashInterval(){
+const makeFastFlashInterval = () => {
     if( flashCycleTime_msec > MIN_FLASHCYCLETIME_MSEC ){
         flashCycleTime_msec -= 50;
     }
@@ -127,7 +127,7 @@ function makeFastFlashInterval(){
     // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
-function makeSlowFlashInterval(){
+const makeSlowFlashInterval = () => {
     if( flashCycleTime_msec < MAX_FLASHCYCLETIME_MSEC ){
         flashCycleTime_msec += 50;
     }
@@ -135,7 +135,7 @@ function makeSlowFlashInterval(){
     // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
-function changeFlashIntervalText( intervalTime ){
+const changeFlashIntervalText = ( intervalTime ) => {
     let supplementaryText = ``;
     
     if( intervalTime === FLASH_CYCLE_TIME_MSEC_DEFAULT ){
@@ -152,7 +152,7 @@ function changeFlashIntervalText( intervalTime ){
 }
 
 let currentColorIndex = 0; 
-function changeFlashColor( index ){
+const changeFlashColor = ( index ) => {
     if( index === undefined ){
         // console.log( `currentColorIndex: ${currentColorIndex}` )
         if( currentColorIndex === 0 ){
@@ -168,14 +168,14 @@ function changeFlashColor( index ){
     }
 }
 
-function setFlashCanvasColor( color ){
+const setFlashCanvasColor = ( color ) => {
     let canvas = document.getElementById('flashCanvas');
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
     ctx.fillRect( 0, 0, canvas.width, canvas.height );
 }
 
-function clearFlashCanvas(){
+const clearFlashCanvas = () => {
     let canvas = document.getElementById('flashCanvas');
     let ctx = canvas.getContext('2d');
     ctx.clearRect( 0, 0, canvas.width, canvas.height );
@@ -196,7 +196,7 @@ let currentBlur = 0;
 const EASE = 0.07;
 const BLUR_MAX = 8;
 
-function drawAnimationStartButton( event ){
+const drawAnimationStartButton = ( event ) => {
     let canvas = document.getElementById('startButtonCanvas');
     let ctx = canvas.getContext('2d');
     // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
@@ -260,7 +260,7 @@ function drawAnimationStartButton( event ){
     
 }
 
-function drawSettingMenu( event ){
+const drawSettingMenu = ( event ) => {
     let canvas = document.getElementById('settingMenuCanvas');
     let ctx = canvas.getContext('2d');
     // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
@@ -336,7 +336,7 @@ function drawSettingMenu( event ){
     }
 }
 
-function selectFlashColorsFromSettingMenu( event ){
+const selectFlashColorsFromSettingMenu = ( event ) => {
 
     let canvas = document.getElementById('settingMenuCanvas');
     let ctx = canvas.getContext('2d');
@@ -383,7 +383,7 @@ function selectFlashColorsFromSettingMenu( event ){
 
 }
 
-function drawExitButton(){
+const drawExitButton = () => {
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
 
@@ -406,7 +406,7 @@ function drawExitButton(){
     ctx.stroke();                
 }
 
-function drawHilightedExitButton(){
+const drawHilightedExitButton = () => {
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
 
@@ -440,7 +440,7 @@ function drawHilightedExitButton(){
 // Mouse events.
 let mousemoveEventStartButton = undefined;
 let mousemoveEventSettingMenu = undefined;
-function loop(){
+const loop = () => {
     drawAnimationStartButton( mousemoveEventStartButton );
     drawSettingMenu( mousemoveEventSettingMenu );
     requestAnimationFrame( loop );
@@ -484,7 +484,7 @@ exitButtonCanvas.addEventListener('mouseout', () =>{
 drawExitButton();
 
 // Reference : https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
-function requestFullScreen(){
+const requestFullScreen = () => {
     let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
@@ -504,7 +504,7 @@ function requestFullScreen(){
     }
 }
 
-function exitFullScreen(){
+const exitFullScreen = () => {
     let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
