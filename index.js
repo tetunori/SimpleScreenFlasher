@@ -124,7 +124,7 @@ function makeFastFlashInterval(){
         flashCycleTime_msec -= 50;
     }
     changeFlashIntervalText( flashCycleTime_msec );
-    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+    // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
 function makeSlowFlashInterval(){
@@ -132,34 +132,29 @@ function makeSlowFlashInterval(){
         flashCycleTime_msec += 50;
     }
     changeFlashIntervalText( flashCycleTime_msec );
-    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+    // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
 function changeFlashIntervalText( intervalTime ){
-    const FLASH_INTERVAL_TEXT_TEMPLATE_A = 'Flash Interval : ';
-    const FLASH_INTERVAL_TEXT_TEMPLATE_B = ' msec'
-    const FLASH_INTERVAL_TEXT_TEMPLATE_C = ', "↑" : Faster Interval, "↓" : Slower Interval';
-    document.getElementById("flashIntervalText").innerHTML = 
-        FLASH_INTERVAL_TEXT_TEMPLATE_A + intervalTime + 
-            FLASH_INTERVAL_TEXT_TEMPLATE_B;
+    let supplementaryText = ``;
     
     if( intervalTime === FLASH_CYCLE_TIME_MSEC_DEFAULT ){
-        document.getElementById("flashIntervalText").innerHTML += '(default)'
+        supplementaryText = `(default)`
     }else if( intervalTime === MAX_FLASHCYCLETIME_MSEC ){
-        document.getElementById("flashIntervalText").innerHTML += '(slowest)'
+        supplementaryText = `(slowest)`
     }else if( intervalTime === MIN_FLASHCYCLETIME_MSEC ){
-        document.getElementById("flashIntervalText").innerHTML += '(fastest)'
+        supplementaryText = `(fastest)`
     }
-            
-    document.getElementById("flashIntervalText").innerHTML += 
-        FLASH_INTERVAL_TEXT_TEMPLATE_C;
+
+    document.getElementById("flashIntervalText").innerHTML = 
+        `Flash Interval : ${intervalTime} msec${supplementaryText}, "↑" : Faster Interval, "↓" : Slower Interval`;
     
 }
 
 let currentColorIndex = 0; 
 function changeFlashColor( index ){
     if( index === undefined ){
-        // console.log( 'currentColorIndex : ' + currentColorIndex )
+        // console.log( `currentColorIndex: ${currentColorIndex}` )
         if( currentColorIndex === 0 ){
             setFlashCanvasColor( flashColor[1] );
             currentColorIndex = 1;
@@ -326,7 +321,7 @@ function drawSettingMenu( event ){
     }
 
     if( distanceCenterToCursor < RADIUS ){
-        // console.log( selectTargetIndex );
+        // console.log( `${selectTargetIndex}` );
         for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
             if( ( iteration === selectTargetIndex ) || 
                 ( Math.abs( iteration - selectTargetIndex ) === 6 ) ){
@@ -454,7 +449,7 @@ loop();
 
 let startButtonCanvas = document.getElementById('startButtonCanvas');
 startButtonCanvas.addEventListener('click', () =>{
-    // console.log( 'startButtonCanvas.onClick' );
+    // console.log( `startButtonCanvas.onClick` );
     goToFlashScreen();
 }, false);
 startButtonCanvas.addEventListener('mousemove', (event) =>{
@@ -466,7 +461,7 @@ startButtonCanvas.addEventListener('mouseout', () =>{
 
 let settingMenuCanvas = document.getElementById('settingMenuCanvas');
 settingMenuCanvas.addEventListener('click', (event) =>{
-    // console.log( 'settingMenuCanvas.onClick' );
+    // console.log( `settingMenuCanvas.onClick` );
     selectFlashColorsFromSettingMenu( event );
 }, false);
 settingMenuCanvas.addEventListener('mousemove', (event) =>{
