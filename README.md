@@ -47,6 +47,6 @@ https://liginc.co.jp/web/js/130758
 Set/Exit Full Screen  
 https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
 
-RYB Color Wheel
-http://bahamas10.github.io/ryb/
-https://github.com/bahamas10/ryb
+RYB Color Wheel  
+http://bahamas10.github.io/ryb/  
+https://github.com/bahamas10/ryb  
