@@ -70,18 +70,22 @@ const goToFlashScreen = () => {
     requestFullScreen();
 }
 
+const setStyleDisplay = ( id, display ) => {
+    document.getElementById( id ).style.display = display;
+}
+
 const transitToTitle = () => {
-    document.getElementById("titleScreenWrapper").style.display="block";
-    document.getElementById("copyWriteText").style.display="block";
-    document.getElementById("operationText").style.display="none";
-    document.getElementById("exitButtonDiv").style.display="none";
+    setStyleDisplay("titleScreenWrapper", "block");
+    setStyleDisplay("copyWriteText", "block");
+    setStyleDisplay("operationText", "none");
+    setStyleDisplay("exitButtonDiv", "none");
 }
 
 const transitToFlash = () => {
-    document.getElementById("titleScreenWrapper").style.display="none";
-    document.getElementById("copyWriteText").style.display="none";
-    document.getElementById("operationText").style.display="block";
-    document.getElementById("exitButtonDiv").style.display="block";
+    setStyleDisplay("titleScreenWrapper", "none");
+    setStyleDisplay("copyWriteText", "none");
+    setStyleDisplay("operationText", "block");
+    setStyleDisplay("exitButtonDiv", "block");
 }
 
 // Functions on flash canvas
@@ -182,15 +186,6 @@ const clearFlashCanvas = () => {
 }
 
 // Animation start button
-// https://liginc.co.jp/web/js/130758
-(function() {
-    let requestAnimationFrame = window.requestAnimationFrame || 
-　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
-                            　window.webkitRequestAnimationFrame || 
-　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
-    window.requestAnimationFrame = requestAnimationFrame;
-})();
-
 let controlPosition = {x:0, y:0};
 let currentBlur = 0;
 const EASE = 0.07;
@@ -238,7 +233,9 @@ const drawAnimationStartButton = ( event ) => {
 
     let startPointRadian = Math.PI / 2 + Math.atan2( Y_CENTER - controlPosition.y, X_CENTER - controlPosition.x );
     ctx.beginPath ();
-    ctx.arc( X_CENTER, Y_CENTER, RADIUS, 
+
+    // RADIUS + 0.5 avoids noises on the circumference of the semi-circle
+    ctx.arc( X_CENTER, Y_CENTER, RADIUS + 0.5, 
                 startPointRadian, startPointRadian + Math.PI, false ) ;
     ctx.fillStyle = flashColor[1];
     ctx.fill();
@@ -305,7 +302,7 @@ const drawSettingMenu = ( event ) => {
         }
     }
 
-    // More hi-light selec target
+    // More hi-light select target
     let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
     let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
     let selectTargetIndex = 0;
@@ -437,6 +434,15 @@ const drawHilightedExitButton = () => {
     
 }
 
+// https://liginc.co.jp/web/js/130758
+(function() {
+    let requestAnimationFrame = window.requestAnimationFrame || 
+　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
+                            　window.webkitRequestAnimationFrame || 
+　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+})();
+
 // Mouse events.
 let mousemoveEventStartButton = undefined;
 let mousemoveEventSettingMenu = undefined;
@@ -448,37 +454,37 @@ const loop = () => {
 loop();
 
 let startButtonCanvas = document.getElementById('startButtonCanvas');
-startButtonCanvas.addEventListener('click', () =>{
+startButtonCanvas.addEventListener('click', () => {
     // console.log( `startButtonCanvas.onClick` );
     goToFlashScreen();
 }, false);
-startButtonCanvas.addEventListener('mousemove', (event) =>{
+startButtonCanvas.addEventListener('mousemove', (event) => {
     mousemoveEventStartButton = event;
 }, false);
-startButtonCanvas.addEventListener('mouseout', () =>{
+startButtonCanvas.addEventListener('mouseout', () => {
     mousemoveEventStartButton = undefined;
 }, false);
 
 let settingMenuCanvas = document.getElementById('settingMenuCanvas');
-settingMenuCanvas.addEventListener('click', (event) =>{
+settingMenuCanvas.addEventListener('click', (event) => {
     // console.log( `settingMenuCanvas.onClick` );
     selectFlashColorsFromSettingMenu( event );
 }, false);
-settingMenuCanvas.addEventListener('mousemove', (event) =>{
+settingMenuCanvas.addEventListener('mousemove', (event) => {
     mousemoveEventSettingMenu = event;
 }, false);
-settingMenuCanvas.addEventListener('mouseout', () =>{
+settingMenuCanvas.addEventListener('mouseout', () => {
     mousemoveEventSettingMenu = undefined;
 }, false);
 
 let exitButtonCanvas = document.getElementById('exitButtonCanvas');
-exitButtonCanvas.addEventListener('click', () =>{
+exitButtonCanvas.addEventListener('click', () => {
     stopFlashAndGoToTitle();
 }, false);
-exitButtonCanvas.addEventListener('mouseover', () =>{
+exitButtonCanvas.addEventListener('mouseover', () => {
     drawHilightedExitButton();
 }, false);
-exitButtonCanvas.addEventListener('mouseout', () =>{
+exitButtonCanvas.addEventListener('mouseout', () => {
     drawExitButton();
 }, false);
 drawExitButton();
