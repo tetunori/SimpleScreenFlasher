@@ -56,32 +56,36 @@ window.addEventListener('keydown', (event) => {
 });
 
 // Functions on mode transit
-function stopFlashAndGoToTitle(){
+const stopFlashAndGoToTitle = () => {
     stopFlashIntervalTimer();
     clearFlashCanvas();
     transitToTitle();
     exitFullScreen();
 }
 
-function goToFlashScreen(){
+const goToFlashScreen = () => {
     changeFlashColor();
     startFlashIntervalTimer();
     transitToFlash();
     requestFullScreen();
 }
 
-function transitToTitle(){
-    document.getElementById("titleScreenWrapper").style.display="block";
-    document.getElementById("copyWriteText").style.display="block";
-    document.getElementById("operationText").style.display="none";
-    document.getElementById("exitButtonDiv").style.display="none";
+const setStyleDisplay = ( id, display ) => {
+    document.getElementById( id ).style.display = display;
 }
 
-function transitToFlash(){
-    document.getElementById("titleScreenWrapper").style.display="none";
-    document.getElementById("copyWriteText").style.display="none";
-    document.getElementById("operationText").style.display="block";
-    document.getElementById("exitButtonDiv").style.display="block";
+const transitToTitle = () => {
+    setStyleDisplay("titleScreenWrapper", "block");
+    setStyleDisplay("copyWriteText", "block");
+    setStyleDisplay("operationText", "none");
+    setStyleDisplay("exitButtonDiv", "none");
+}
+
+const transitToFlash = () => {
+    setStyleDisplay("titleScreenWrapper", "none");
+    setStyleDisplay("copyWriteText", "none");
+    setStyleDisplay("operationText", "block");
+    setStyleDisplay("exitButtonDiv", "block");
 }
 
 // Functions on flash canvas
@@ -91,7 +95,7 @@ flashColor[1] = GREEN_COLOR;
 
 let flashIntervalTimer = null;
 let flashForcedStopTimer = null;
-function startFlashIntervalTimer(){
+const startFlashIntervalTimer = () => {
     if( flashForcedStopTimer === null ){
         flashForcedStopTimer = setTimeout( () => {
             stopFlashAndGoToTitle(); 
@@ -105,7 +109,7 @@ function startFlashIntervalTimer(){
     }
 }
 
-function stopFlashIntervalTimer(){
+const stopFlashIntervalTimer = () => {
     if( flashForcedStopTimer !== null ){
         clearTimeout( flashForcedStopTimer );
         flashForcedStopTimer = null;
@@ -119,47 +123,42 @@ function stopFlashIntervalTimer(){
 
 const MAX_FLASHCYCLETIME_MSEC = 5000;
 const MIN_FLASHCYCLETIME_MSEC = 300;
-function makeFastFlashInterval(){
+const makeFastFlashInterval = () => {
     if( flashCycleTime_msec > MIN_FLASHCYCLETIME_MSEC ){
         flashCycleTime_msec -= 50;
     }
     changeFlashIntervalText( flashCycleTime_msec );
-    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+    // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
-function makeSlowFlashInterval(){
+const makeSlowFlashInterval = () => {
     if( flashCycleTime_msec < MAX_FLASHCYCLETIME_MSEC ){
         flashCycleTime_msec += 50;
     }
     changeFlashIntervalText( flashCycleTime_msec );
-    // console.log( 'flashCycleTime_msec is ' + flashCycleTime_msec );
+    // console.log( `flashCycleTime_msec: ${flashCycleTime_msec}` );
 }
 
-function changeFlashIntervalText( intervalTime ){
-    const FLASH_INTERVAL_TEXT_TEMPLATE_A = 'Flash Interval : ';
-    const FLASH_INTERVAL_TEXT_TEMPLATE_B = ' msec'
-    const FLASH_INTERVAL_TEXT_TEMPLATE_C = ', "↑" : Faster Interval, "↓" : Slower Interval';
-    document.getElementById("flashIntervalText").innerHTML = 
-        FLASH_INTERVAL_TEXT_TEMPLATE_A + intervalTime + 
-            FLASH_INTERVAL_TEXT_TEMPLATE_B;
+const changeFlashIntervalText = ( intervalTime ) => {
+    let supplementaryText = ``;
     
     if( intervalTime === FLASH_CYCLE_TIME_MSEC_DEFAULT ){
-        document.getElementById("flashIntervalText").innerHTML += '(default)'
+        supplementaryText = `(default)`
     }else if( intervalTime === MAX_FLASHCYCLETIME_MSEC ){
-        document.getElementById("flashIntervalText").innerHTML += '(slowest)'
+        supplementaryText = `(slowest)`
     }else if( intervalTime === MIN_FLASHCYCLETIME_MSEC ){
-        document.getElementById("flashIntervalText").innerHTML += '(fastest)'
+        supplementaryText = `(fastest)`
     }
-            
-    document.getElementById("flashIntervalText").innerHTML += 
-        FLASH_INTERVAL_TEXT_TEMPLATE_C;
+
+    document.getElementById("flashIntervalText").innerHTML = 
+        `Flash Interval : ${intervalTime} msec${supplementaryText}, "↑" : Faster Interval, "↓" : Slower Interval`;
     
 }
 
 let currentColorIndex = 0; 
-function changeFlashColor( index ){
+const changeFlashColor = ( index ) => {
     if( index === undefined ){
-        // console.log( 'currentColorIndex : ' + currentColorIndex )
+        // console.log( `currentColorIndex: ${currentColorIndex}` )
         if( currentColorIndex === 0 ){
             setFlashCanvasColor( flashColor[1] );
             currentColorIndex = 1;
@@ -173,35 +172,26 @@ function changeFlashColor( index ){
     }
 }
 
-function setFlashCanvasColor( color ){
+const setFlashCanvasColor = ( color ) => {
     let canvas = document.getElementById('flashCanvas');
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = color;
     ctx.fillRect( 0, 0, canvas.width, canvas.height );
 }
 
-function clearFlashCanvas(){
+const clearFlashCanvas = () => {
     let canvas = document.getElementById('flashCanvas');
     let ctx = canvas.getContext('2d');
     ctx.clearRect( 0, 0, canvas.width, canvas.height );
 }
 
 // Animation start button
-// https://liginc.co.jp/web/js/130758
-(function() {
-    let requestAnimationFrame = window.requestAnimationFrame || 
-　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
-                            　window.webkitRequestAnimationFrame || 
-　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
-    window.requestAnimationFrame = requestAnimationFrame;
-})();
-
 let controlPosition = {x:0, y:0};
 let currentBlur = 0;
 const EASE = 0.07;
 const BLUR_MAX = 8;
 
-function drawAnimationStartButton( event ){
+const drawAnimationStartButton = ( event ) => {
     let canvas = document.getElementById('startButtonCanvas');
     let ctx = canvas.getContext('2d');
     // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
@@ -243,7 +233,9 @@ function drawAnimationStartButton( event ){
 
     let startPointRadian = Math.PI / 2 + Math.atan2( Y_CENTER - controlPosition.y, X_CENTER - controlPosition.x );
     ctx.beginPath ();
-    ctx.arc( X_CENTER, Y_CENTER, RADIUS, 
+
+    // RADIUS + 0.5 avoids noises on the circumference of the semi-circle
+    ctx.arc( X_CENTER, Y_CENTER, RADIUS + 0.5, 
                 startPointRadian, startPointRadian + Math.PI, false ) ;
     ctx.fillStyle = flashColor[1];
     ctx.fill();
@@ -265,7 +257,7 @@ function drawAnimationStartButton( event ){
     
 }
 
-function drawSettingMenu( event ){
+const drawSettingMenu = ( event ) => {
     let canvas = document.getElementById('settingMenuCanvas');
     let ctx = canvas.getContext('2d');
     // ctx.fillStyle = "rgba(0,0,255,1.0)" ;
@@ -310,7 +302,7 @@ function drawSettingMenu( event ){
         }
     }
 
-    // More hi-light selec target
+    // More hi-light select target
     let distanceCenterToCursor = Math.hypot( x - X_CENTER, y - Y_CENTER );
     let relAngle = Math.atan2( Y_CENTER - y, X_CENTER - x );
     let selectTargetIndex = 0;
@@ -326,7 +318,7 @@ function drawSettingMenu( event ){
     }
 
     if( distanceCenterToCursor < RADIUS ){
-        // console.log( selectTargetIndex );
+        // console.log( `${selectTargetIndex}` );
         for( iteration = 0; iteration < RYB_WHEEL_COLOR_ARRAY.length; iteration++ ){
             if( ( iteration === selectTargetIndex ) || 
                 ( Math.abs( iteration - selectTargetIndex ) === 6 ) ){
@@ -341,7 +333,7 @@ function drawSettingMenu( event ){
     }
 }
 
-function selectFlashColorsFromSettingMenu( event ){
+const selectFlashColorsFromSettingMenu = ( event ) => {
 
     let canvas = document.getElementById('settingMenuCanvas');
     let ctx = canvas.getContext('2d');
@@ -388,7 +380,7 @@ function selectFlashColorsFromSettingMenu( event ){
 
 }
 
-function drawExitButton(){
+const drawExitButton = () => {
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
 
@@ -411,7 +403,7 @@ function drawExitButton(){
     ctx.stroke();                
 }
 
-function drawHilightedExitButton(){
+const drawHilightedExitButton = () => {
     let canvas = document.getElementById('exitButtonCanvas');
     let ctx = canvas.getContext('2d');
 
@@ -442,10 +434,19 @@ function drawHilightedExitButton(){
     
 }
 
+// https://liginc.co.jp/web/js/130758
+(function() {
+    let requestAnimationFrame = window.requestAnimationFrame || 
+　　　　　　　　　　　　　　　　　　　window.mozRequestAnimationFrame ||
+                            　window.webkitRequestAnimationFrame || 
+　　　　　　　　　　　　　　　　　　　window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+})();
+
 // Mouse events.
 let mousemoveEventStartButton = undefined;
 let mousemoveEventSettingMenu = undefined;
-function loop(){
+const loop = () => {
     drawAnimationStartButton( mousemoveEventStartButton );
     drawSettingMenu( mousemoveEventSettingMenu );
     requestAnimationFrame( loop );
@@ -453,43 +454,43 @@ function loop(){
 loop();
 
 let startButtonCanvas = document.getElementById('startButtonCanvas');
-startButtonCanvas.addEventListener('click', () =>{
-    // console.log( 'startButtonCanvas.onClick' );
+startButtonCanvas.addEventListener('click', () => {
+    // console.log( `startButtonCanvas.onClick` );
     goToFlashScreen();
 }, false);
-startButtonCanvas.addEventListener('mousemove', (event) =>{
+startButtonCanvas.addEventListener('mousemove', (event) => {
     mousemoveEventStartButton = event;
 }, false);
-startButtonCanvas.addEventListener('mouseout', () =>{
+startButtonCanvas.addEventListener('mouseout', () => {
     mousemoveEventStartButton = undefined;
 }, false);
 
 let settingMenuCanvas = document.getElementById('settingMenuCanvas');
-settingMenuCanvas.addEventListener('click', (event) =>{
-    // console.log( 'settingMenuCanvas.onClick' );
+settingMenuCanvas.addEventListener('click', (event) => {
+    // console.log( `settingMenuCanvas.onClick` );
     selectFlashColorsFromSettingMenu( event );
 }, false);
-settingMenuCanvas.addEventListener('mousemove', (event) =>{
+settingMenuCanvas.addEventListener('mousemove', (event) => {
     mousemoveEventSettingMenu = event;
 }, false);
-settingMenuCanvas.addEventListener('mouseout', () =>{
+settingMenuCanvas.addEventListener('mouseout', () => {
     mousemoveEventSettingMenu = undefined;
 }, false);
 
 let exitButtonCanvas = document.getElementById('exitButtonCanvas');
-exitButtonCanvas.addEventListener('click', () =>{
+exitButtonCanvas.addEventListener('click', () => {
     stopFlashAndGoToTitle();
 }, false);
-exitButtonCanvas.addEventListener('mouseover', () =>{
+exitButtonCanvas.addEventListener('mouseover', () => {
     drawHilightedExitButton();
 }, false);
-exitButtonCanvas.addEventListener('mouseout', () =>{
+exitButtonCanvas.addEventListener('mouseout', () => {
     drawExitButton();
 }, false);
 drawExitButton();
 
 // Reference : https://stackoverflow.com/questions/36672561/how-to-exit-fullscreen-onclick-using-javascript
-function requestFullScreen(){
+const requestFullScreen = () => {
     let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
@@ -509,7 +510,7 @@ function requestFullScreen(){
     }
 }
 
-function exitFullScreen(){
+const exitFullScreen = () => {
     let isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
         (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
         (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
