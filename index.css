@@ -29,6 +29,7 @@ canvas{
         font-weight: 700;
         color: rgba( 255, 255, 255, 0.6 );
         display:none;
+        cursor: pointer;
     }
     div.titleScreenWrapper {
         position:absolute;
@@ -69,6 +70,7 @@ canvas{
         font-weight: 700;
         color: rgba( 255, 255, 255, 0.6 );
         display:none;
+        cursor: pointer;
     }
     div.titleScreenWrapper {
         position:absolute;
@@ -103,6 +105,11 @@ div.exitButtonDiv {
     margin-left:10px;
     margin-top:10px;
     display:none;
+    cursor: pointer;
+}
+
+span.titleMenuCanvas{
+    cursor: pointer;
 }
 
 #copyWriteText a { color:black } 
