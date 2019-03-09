@@ -24,8 +24,15 @@
         </div>
 
         <div id="operationText" class="operationText"> 
-            <div id="flashIntervalText">Flash Interval : 1100 msec(default), "↑" : Faster Interval, "↓" : Slower Interval</div>
-            "S" : Start/Stop, "←" : Color A, "→" : Color B, "X" : Exit
+            <div>
+                <span id="flashIntervalText">Flash Interval : 1100 msec(default)</span>, 
+                <span id="opFastFlashInterval">"↑" : Faster Interval</span>, 
+                <span id="opSlowFlashInterval">"↓" : Slower Interval</span>
+            </div>
+            <span id="opStartStopText">"S" : Start/Stop</span>, 
+            <span id="opColorA">"←" : Color A</span>, 
+            <span id="opColorB">"→" : Color B</span>, 
+            <span id="opExit">"X" : Exit</span>
         </div>
         
         <div id="copyWriteText" class="copyWriteText"> 
@@ -45,8 +52,10 @@
                     <br><b>WARNING</b> : Do NOT keep on looking at the screen for a long time. Please refrain from flashing at high speed by key operation.</p>
             </div>
             <br>
-            <canvas id="settingMenuCanvas" width="260" height="120"></canvas>
-            <canvas id="startButtonCanvas" width="120" height="120"></canvas>
+            <span id="titleMenuCanvas" class="titleMenuCanvas"> 
+                <canvas id="settingMenuCanvas" width="260" height="120"></canvas>
+                <canvas id="startButtonCanvas" width="120" height="120"></canvas>
+            </span>
         </div>
 
         <!-- script -->

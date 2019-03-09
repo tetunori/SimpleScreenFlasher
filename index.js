@@ -31,29 +31,67 @@ const KEYCODE_DOWN  = 40;
 // Handle key events.
 window.addEventListener('keydown', (event) => {
     if ( ( event.keyCode === KEYCODE_X ) || ( event.keyCode === KEYCODE_ESC ) ) {
-        stopFlashAndGoToTitle();
+        opExit();
     }else if ( event.keyCode === KEYCODE_S ) {
-        if( flashIntervalTimer === null ){
-            goToFlashScreen();
-        }else{
-            stopFlashIntervalTimer();
-        }
+        opStartStop();
     }else if ( event.keyCode === KEYCODE_LEFT ) {
-        stopFlashIntervalTimer();
-        changeFlashColor( 0 );
+        opColorA();
     }else if ( event.keyCode === KEYCODE_RIGHT ) {
-        stopFlashIntervalTimer();
-        changeFlashColor( 1 );
+        opColorB();
     }else if ( event.keyCode === KEYCODE_UP ) {
-        stopFlashIntervalTimer();
-        makeFastFlashInterval();
-        startFlashIntervalTimer();
+        opFastFlashInterval();
     }else if ( event.keyCode === KEYCODE_DOWN ) {
-        stopFlashIntervalTimer();
-        makeSlowFlashInterval();
-        startFlashIntervalTimer();
+        opSlowFlashInterval();
     }
 });
+
+const addOnClickEventListnerMacro = ( id, func ) => {
+    var obj = document.getElementById( id );
+    obj.addEventListener( "click" , func , false );
+}
+
+// Key/Touch Operations
+const opStartStop = () => {
+    if( flashIntervalTimer === null ){
+        goToFlashScreen();
+    }else{
+        stopFlashIntervalTimer();
+    }
+}
+addOnClickEventListnerMacro( 'opStartStopText', opStartStop );
+
+const opExit = () => {
+    stopFlashAndGoToTitle();
+}
+addOnClickEventListnerMacro( 'opExit', opExit );
+
+const opColorA = () => {
+    goToFlashScreen();
+    stopFlashIntervalTimer();
+    changeFlashColor( 0 );
+}
+addOnClickEventListnerMacro( 'opColorA', opColorA );
+
+const opColorB = () => {
+    goToFlashScreen();
+    stopFlashIntervalTimer();
+    changeFlashColor( 1 );
+}
+addOnClickEventListnerMacro( 'opColorB', opColorB );
+
+const opFastFlashInterval = () => {
+    stopFlashIntervalTimer();
+    makeFastFlashInterval();
+    startFlashIntervalTimer();
+}
+addOnClickEventListnerMacro( 'opFastFlashInterval', opFastFlashInterval );
+
+const opSlowFlashInterval = () => {
+    stopFlashIntervalTimer();
+    makeSlowFlashInterval();
+    startFlashIntervalTimer();
+}
+addOnClickEventListnerMacro( 'opSlowFlashInterval', opSlowFlashInterval );
 
 // Functions on mode transit
 const stopFlashAndGoToTitle = () => {
@@ -151,7 +189,7 @@ const changeFlashIntervalText = ( intervalTime ) => {
     }
 
     document.getElementById("flashIntervalText").innerHTML = 
-        `Flash Interval : ${intervalTime} msec${supplementaryText}, "↑" : Faster Interval, "↓" : Slower Interval`;
+        `Flash Interval : ${intervalTime} msec${supplementaryText}`;
     
 }
 
@@ -186,7 +224,7 @@ const clearFlashCanvas = () => {
 }
 
 // Animation start button
-let controlPosition = {x:0, y:0};
+let startPointRadian = 0;
 let currentBlur = 0;
 const EASE = 0.07;
 const BLUR_MAX = 8;
@@ -216,6 +254,8 @@ const drawAnimationStartButton = ( event ) => {
     let targetBlur = 0;
     if( ( distanceCenterToCursor > RADIUS ) || ( event === undefined ) ){
         targetBlur = 0;
+        x = 0;
+        y = 0;
     }else{
         targetBlur = BLUR_MAX;
     }
@@ -228,10 +268,9 @@ const drawAnimationStartButton = ( event ) => {
     ctx.shadowBlur = 0;
 
     // 2nd color semi-circle on base circle
-    controlPosition.x += ( x - controlPosition.x ) * EASE;
-    controlPosition.y += ( y - controlPosition.y ) * EASE;
-
-    let startPointRadian = Math.PI / 2 + Math.atan2( Y_CENTER - controlPosition.y, X_CENTER - controlPosition.x );
+    let relAngle = Math.PI / 2 + Math.atan2( Y_CENTER - y, X_CENTER - x );
+    startPointRadian += normalizeAngle( relAngle - startPointRadian ) * EASE;
+    startPointRadian = normalizeAngle( startPointRadian );
     ctx.beginPath ();
 
     // RADIUS + 0.5 avoids noises on the circumference of the semi-circle
@@ -255,6 +294,18 @@ const drawAnimationStartButton = ( event ) => {
     ctx.fillStyle = 'rgb(245, 245, 245)' ;
     ctx.fill();
     
+}
+
+const normalizeAngle = ( angle ) => {
+    let ret_val = angle;
+
+    if( angle < - Math.PI ){
+        ret_val = angle + 2 * Math.PI;
+    }else if( angle > Math.PI ){
+        ret_val = angle - 2 * Math.PI;
+    }
+
+    return ret_val;
 }
 
 const drawSettingMenu = ( event ) => {
