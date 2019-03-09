@@ -66,12 +66,14 @@ const opExit = () => {
 addOnClickEventListnerMacro( 'opExit', opExit );
 
 const opColorA = () => {
+    goToFlashScreen();
     stopFlashIntervalTimer();
     changeFlashColor( 0 );
 }
 addOnClickEventListnerMacro( 'opColorA', opColorA );
 
 const opColorB = () => {
+    goToFlashScreen();
     stopFlashIntervalTimer();
     changeFlashColor( 1 );
 }
