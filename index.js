@@ -31,29 +31,65 @@ const KEYCODE_DOWN  = 40;
 // Handle key events.
 window.addEventListener('keydown', (event) => {
     if ( ( event.keyCode === KEYCODE_X ) || ( event.keyCode === KEYCODE_ESC ) ) {
-        stopFlashAndGoToTitle();
+        opExit();
     }else if ( event.keyCode === KEYCODE_S ) {
-        if( flashIntervalTimer === null ){
-            goToFlashScreen();
-        }else{
-            stopFlashIntervalTimer();
-        }
+        opStartStop();
     }else if ( event.keyCode === KEYCODE_LEFT ) {
-        stopFlashIntervalTimer();
-        changeFlashColor( 0 );
+        opColorA();
     }else if ( event.keyCode === KEYCODE_RIGHT ) {
-        stopFlashIntervalTimer();
-        changeFlashColor( 1 );
+        opColorB();
     }else if ( event.keyCode === KEYCODE_UP ) {
-        stopFlashIntervalTimer();
-        makeFastFlashInterval();
-        startFlashIntervalTimer();
+        opFastFlashInterval();
     }else if ( event.keyCode === KEYCODE_DOWN ) {
-        stopFlashIntervalTimer();
-        makeSlowFlashInterval();
-        startFlashIntervalTimer();
+        opSlowFlashInterval();
     }
 });
+
+const addOnClickEventListnerMacro = ( id, func ) => {
+    var obj = document.getElementById( id );
+    obj.addEventListener( "click" , func , false );
+}
+
+// Key/Touch Operations
+const opStartStop = () => {
+    if( flashIntervalTimer === null ){
+        goToFlashScreen();
+    }else{
+        stopFlashIntervalTimer();
+    }
+}
+addOnClickEventListnerMacro( 'opStartStopText', opStartStop );
+
+const opExit = () => {
+    stopFlashAndGoToTitle();
+}
+addOnClickEventListnerMacro( 'opExit', opExit );
+
+const opColorA = () => {
+    stopFlashIntervalTimer();
+    changeFlashColor( 0 );
+}
+addOnClickEventListnerMacro( 'opColorA', opColorA );
+
+const opColorB = () => {
+    stopFlashIntervalTimer();
+    changeFlashColor( 1 );
+}
+addOnClickEventListnerMacro( 'opColorB', opColorB );
+
+const opFastFlashInterval = () => {
+    stopFlashIntervalTimer();
+    makeFastFlashInterval();
+    startFlashIntervalTimer();
+}
+addOnClickEventListnerMacro( 'opFastFlashInterval', opFastFlashInterval );
+
+const opSlowFlashInterval = () => {
+    stopFlashIntervalTimer();
+    makeSlowFlashInterval();
+    startFlashIntervalTimer();
+}
+addOnClickEventListnerMacro( 'opSlowFlashInterval', opSlowFlashInterval );
 
 // Functions on mode transit
 const stopFlashAndGoToTitle = () => {
@@ -151,7 +187,7 @@ const changeFlashIntervalText = ( intervalTime ) => {
     }
 
     document.getElementById("flashIntervalText").innerHTML = 
-        `Flash Interval : ${intervalTime} msec${supplementaryText}, "↑" : Faster Interval, "↓" : Slower Interval`;
+        `Flash Interval : ${intervalTime} msec${supplementaryText}`;
     
 }
 
