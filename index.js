@@ -186,7 +186,7 @@ const clearFlashCanvas = () => {
 }
 
 // Animation start button
-let controlPosition = {x:0, y:0};
+let startPointRadian = 0;
 let currentBlur = 0;
 const EASE = 0.07;
 const BLUR_MAX = 8;
@@ -216,6 +216,8 @@ const drawAnimationStartButton = ( event ) => {
     let targetBlur = 0;
     if( ( distanceCenterToCursor > RADIUS ) || ( event === undefined ) ){
         targetBlur = 0;
+        x = 0;
+        y = 0;
     }else{
         targetBlur = BLUR_MAX;
     }
@@ -228,10 +230,9 @@ const drawAnimationStartButton = ( event ) => {
     ctx.shadowBlur = 0;
 
     // 2nd color semi-circle on base circle
-    controlPosition.x += ( x - controlPosition.x ) * EASE;
-    controlPosition.y += ( y - controlPosition.y ) * EASE;
-
-    let startPointRadian = Math.PI / 2 + Math.atan2( Y_CENTER - controlPosition.y, X_CENTER - controlPosition.x );
+    let relAngle = Math.PI / 2 + Math.atan2( Y_CENTER - y, X_CENTER - x );
+    startPointRadian += normalizeAngle( relAngle - startPointRadian ) * EASE;
+    startPointRadian = normalizeAngle( startPointRadian );
     ctx.beginPath ();
 
     // RADIUS + 0.5 avoids noises on the circumference of the semi-circle
@@ -255,6 +256,18 @@ const drawAnimationStartButton = ( event ) => {
     ctx.fillStyle = 'rgb(245, 245, 245)' ;
     ctx.fill();
     
+}
+
+const normalizeAngle = ( angle ) => {
+    let ret_val = angle;
+
+    if( angle < - Math.PI ){
+        ret_val = angle + 2 * Math.PI;
+    }else if( angle > Math.PI ){
+        ret_val = angle - 2 * Math.PI;
+    }
+
+    return ret_val;
 }
 
 const drawSettingMenu = ( event ) => {
