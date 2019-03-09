@@ -1,5 +1,5 @@
 # Simple Screen Flasher
-A simple screen flasher. Version 1.1.0 
+A simple screen flasher. Version 1.1.1 
 <img src="https://raw.githubusercontent.com/tetunori/SimpleScreenFlasher/assets/screen_10.png" width="640px">
 
 # Description
